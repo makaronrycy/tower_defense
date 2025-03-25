@@ -7,7 +7,7 @@ class GameScene(QGraphicsScene):
     score_changed = Signal(int)
     lives_changed = Signal(int)
     tower_selected = Signal(object)
-
+    items = []
     def __init__(self, grid_size=20, parent=None):
         super().__init__(parent)
         self.grid_size = grid_size
@@ -63,7 +63,7 @@ class GameScene(QGraphicsScene):
 
     def _connect_signals(self):
         """Connect internal signals"""
-        self.selectionChanged.connect(self._handle_selection_change)
+        #self.selectionChanged.connect(self._handle_selection_change)
 
     # ----------------------
     # Core Game Loop Methods
@@ -84,10 +84,17 @@ class GameScene(QGraphicsScene):
         self._update_projectiles()
         self._check_collisions()
         self._cleanup_items()
+    def update_viewport(self,viewport_rect: QRectF):
+        """Update scene viewport"""
+        for item in self.items():
+            if item.isVisible():
+                item.setVisible(viewport_rect.intersects(item.sceneBoundingRect()))
 
     # ----------------------
     # Update Subsystems
     # ----------------------
+    def _cleanup_items(self):
+        pass
     def _update_enemies(self):
         """Process enemy movement and health"""
         for enemy in self.enemies:

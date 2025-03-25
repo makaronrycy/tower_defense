@@ -106,7 +106,6 @@ class TowerItem(BaseItem):
         super().__init__()
         self.set_z_value(1)
         self.setPos(QPointF(400, 300))
-        self.setFlag(QGraphicsItem.ItemIsMovable, True)
         self.setFlag(QGraphicsItem.ItemIsSelectable, True)
         self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges, True)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)

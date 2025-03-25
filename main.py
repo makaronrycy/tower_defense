@@ -12,7 +12,7 @@ from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform
 class GameView(QGraphicsView):
     viewport_changed = Signal(QRectF)  # Emits visible area changes
     
-    def __init__(self, scene, parent=None):
+    def __init__(self, scene :GameScene, parent=None):
         super().__init__(parent)
         self._scene = scene
         self._zoom_level = 1.0
@@ -127,7 +127,7 @@ class GameView(QGraphicsView):
     def fit_scene(self):
         """Fit entire scene in view"""
         self.fitInView(self.scene().sceneRect(), Qt.KeepAspectRatio)
-
+    
     # --------------------------
     # Performance Optimizations
     # --------------------------
@@ -159,23 +159,12 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("Tower Defense")
-        self.setGeometry(100, 100, 800, 600)
-
-        
-        self.start_button = QPushButton("Start Game", self)
-        self.start_button.setGeometry(350, 250, 100, 50)
-        self.start_button.clicked.connect(self.start_game)
-
-    @Slot()
-    def start_game(self):
-        #change scene
         self.scene = GameScene()
-        self.view = GameView()
-        self.view.setScene(self.scene)
-        
+        self.view = GameView(self.scene)
         self.setCentralWidget(self.view)
-        
-        print("Game Started")
+        self.view.fit_scene()
+
+        QTimer.singleShot(1000, self.scene.start_game)
 
 if __name__ == "__main__":
     app = QApplication([])
