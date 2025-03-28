@@ -3,6 +3,7 @@ from PySide6.QtWidgets import QGraphicsItem, QGraphicsObject
 from PySide6.QtGui import QPainter, QPainterPath, QColor, QBrush
 
 from abc import ABC, abstractmethod
+import math
 class BaseItem(QGraphicsObject):
     def __init__(self,parent=None):
         super().__init__(parent)
@@ -100,6 +101,8 @@ class BaseItem(QGraphicsObject):
     @rotation_angle.setter
     def rotation_angle(self, angle: float) -> None:
         self.setRotation(angle)
+    
+    
 
 class TowerItem(BaseItem):
     def __init__(self):
@@ -111,17 +114,16 @@ class TowerItem(BaseItem):
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
-        
+    
         self._color = QColor(255, 0, 0, 255)
         self._radius = 50
         self._damage = 10
         self._range = 200
-        self._fire_rate = 1000
-        self._last_fire = 0
+        self._fire_rate = 100
         self._target = None
         self._projectiles = []
         self._selected = False
-
+        self._cooldown = 0
     def boundingRect(self) -> QRectF:
         return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
     
@@ -132,9 +134,26 @@ class TowerItem(BaseItem):
         painter.drawText(self.boundingRect(), Qt.AlignCenter, "Tower")
     
     def update(self) -> None:
-        pass
+        if self._cooldown > 0:
+            self._cooldown -= 1
+    def acquire_target(self, enemies):
+        for enemy in enemies:
+            if self.distance_between_points(self.pos(),enemy.pos()) < self._range:
+                self._target = enemy
+                return enemy
+    def should_fire(self):
+        return True if self._target and self._cooldown == 0 else False
+    def create_projectile(self,enemyPos):
+        self._cooldown = self._fire_rate
+        p = ProjectileItem(self.pos(),enemyPos)
+        return p
+
+    def hoverEnterEvent(self, event):
+        return super().hoverEnterEvent(event)
+    def distance_between_points(self,point1,point2):
+        return math.sqrt((point1.x()-point2.x())**2 + (point1.y()-point2.y())**2)
 class EnemyItem(BaseItem):
-    def __init__(self):
+    def __init__(self,path):
         super().__init__()
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
@@ -146,10 +165,12 @@ class EnemyItem(BaseItem):
         self._radius = 20
         self._speed = 1
         self._health = 100
-        self._path = []
-        self._waypoint = 0
+        self._path = path
+        #path[0] to punkt startowy
+        self._current_waypoint = path[1]
         self._target = None
         self._selected = False
+        self.value = 20
 
     def boundingRect(self) -> QRectF:
         return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
@@ -161,4 +182,57 @@ class EnemyItem(BaseItem):
         painter.drawText(self.boundingRect(), Qt.AlignCenter, "Enemy")
     
     def update(self) -> None:
+        self.follow_path()
+
+    def follow_path(self):
+        if(self.pos() == self._current_waypoint):
+            self._current_waypoint = self._path[self._path.index(self._current_waypoint)+1]
+        if(self.pos().x() < self._current_waypoint.x()):
+            self.setPos(self.pos() + QPointF(self._speed, 0))
+        elif(self.pos().x() > self._current_waypoint.x()):
+            self.setPos(self.pos() - QPointF(self._speed, 0))
+        elif(self.pos().y() < self._current_waypoint.y()):  
+            self.setPos(self.pos() + QPointF(0, self._speed))
+        elif(self.pos().y() > self._current_waypoint.y()):
+            self.setPos(self.pos() - QPointF(0, self._speed))
+
+class ProjectileItem(BaseItem):
+    def __init__(self,pos,target):
+        super().__init__()
+        self.set_z_value(1)
+        self.setPos(pos)
+        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
+        self.setAcceptHoverEvents(True)
+        self.setAcceptDrops(True)
+        
+        self._color = QColor(0, 0, 255, 255)
+        self._radius = 5
+        self._speed = 10
+        self._damage= 100
+
+        self._direction = target - pos
+        # Normalize the direction vector
+        direction_length = math.sqrt(self._direction.x()**2 + self._direction.y()**2)
+        if direction_length != 0:
+            self._direction /= direction_length
+        self._selected = False
+        self._lifetime = 1000
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
+    
+    def paint(self, painter: QPainter, option, widget=None) -> None:
+        painter.drawEllipse(self.boundingRect())
+        painter.setPen(QColor(0, 0, 0, 255))
+        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Bullet")
+    
+    def update(self) -> None:
         pass
+    def update_position(self):
+        self.setPos(self.pos() + self._direction * self._speed)
+        self._lifetime -= 1
+        pass
+    def is_expired(self):
+        
+        if self._lifetime <= 0:
+            return True

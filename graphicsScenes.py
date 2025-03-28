@@ -1,25 +1,31 @@
 from PySide6.QtCore import Qt, QTimer, QRectF, QPointF, Signal
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsItem
 from PySide6.QtGui import QBrush, QColor, QPainterPath,QPen
-from graphicItems import TowerItem, EnemyItem
+from graphicItems import TowerItem, EnemyItem, ProjectileItem
+'''
+Klasa odpowiedzialna za sterowanie grą i jej elementami
+'''
 class GameScene(QGraphicsScene):
     # Custom signals
     score_changed = Signal(int)
     lives_changed = Signal(int)
     tower_selected = Signal(object)
-    items = []
+
     def __init__(self, grid_size=20, parent=None):
         super().__init__(parent)
+
         self.grid_size = grid_size
         self.game_active = False
         self.score = 0
         self.lives = 20
         
         # Game state containers
-        self.towers = []
-        self.enemies = []
-        self.projectiles = []
-        self.occupied_cells = set()
+        self.game_items = {
+            "towers": [],
+            "enemies": [],
+            "projectiles": []
+        }
+
         
         # Setup game systems
         self._init_grid()
@@ -97,33 +103,48 @@ class GameScene(QGraphicsScene):
         pass
     def _update_enemies(self):
         """Process enemy movement and health"""
-        for enemy in self.enemies:
-            enemy.follow_path(self.path_points)
-            if enemy.health <= 0:
-                self._handle_enemy_death(enemy)
+        for enemy in self.game_items['enemies']:
+            if enemy.health == 0:
+                self.score += enemy.value
+                self.removeItem(enemy)
+                self.game_items['enemies'].remove(enemy)
+                self.score_changed.emit(self.score)
+                continue
+            if enemy.pos() == self.path_points[-1]:
+                self.lives -= 1
+                self.lives_changed.emit(self.lives)
+                self.removeItem(enemy)
+                self.game_items['enemies'].remove(enemy)
+                continue
+            enemy.update()
 
     def _update_towers(self):
         """Handle tower targeting and shooting"""
-        for tower in self.towers:
-            tower.acquire_target(self.enemies)
-            if tower.should_fire():
-                projectile = tower.create_projectile()
+        for tower in self.game_items['towers']:
+            enemy = tower.acquire_target(self.game_items['enemies'])
+            if tower.should_fire() and enemy is not None:
+                projectile = tower.create_projectile(enemy.pos())
                 self.add_projectile(projectile)
-
+            tower.update()
+    def _handle_projectile_hit(self, projectile, enemy):
+        """Process projectile-enemy collision"""
+        enemy._health -= projectile._damage
+        self.removeItem(projectile)
+        self.game_items['projectiles'].remove(projectile)
     def _update_projectiles(self):
         """Move projectiles and check lifespan"""
-        for projectile in self.projectiles:
+        for projectile in self.game_items['projectiles']:
             projectile.update_position()
             if projectile.is_expired():
                 self.removeItem(projectile)
-                self.projectiles.remove(projectile)
+                self.game_items['projectiles'].remove(projectile)
 
     # ----------------------
     # Collision Detection
     # ----------------------
     def _check_collisions(self):
         """Detect and handle collisions"""
-        for projectile in self.projectiles:
+        for projectile in self.game_items['projectiles']:
             colliding = self.items(projectile.pos())
             for item in colliding:
                 if isinstance(item, EnemyItem):
@@ -135,7 +156,7 @@ class GameScene(QGraphicsScene):
     def add_tower(self, tower, grid_pos):
         """Register new tower"""
         if self._is_valid_placement(grid_pos):
-            self.towers.append(tower)
+            self.game_items['towers'].append(tower)
             self.addItem(tower)
             self.occupied_cells.add(grid_pos)
             return True
@@ -143,13 +164,13 @@ class GameScene(QGraphicsScene):
 
     def add_projectile(self, projectile):
         """Register new projectile"""
-        self.projectiles.append(projectile)
+        self.game_items['projectiles'].append(projectile)
         self.addItem(projectile)
 
     def spawn_enemy(self):
         """Create and register new enemy"""
-        enemy = EnemyItem()
-        self.enemies.append(enemy)
+        enemy = EnemyItem(path=self.path_points)
+        self.game_items['enemies'].append(enemy)
         self.addItem(enemy)
         enemy.setPos(self.path_points[0])
 

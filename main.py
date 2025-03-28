@@ -19,6 +19,7 @@ class GameView(QGraphicsView):
         self._pan_start = QPoint()
         self._panning = False
         
+        
         # Initialize view settings
         self._setup_view()
         self._connect_signals()
