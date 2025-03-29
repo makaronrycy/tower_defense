@@ -1,23 +1,68 @@
-from PySide6.QtCore import Qt, QTimer, QRectF, QPointF, Signal
+from PySide6.QtCore import Qt, QTimer, QRectF, QPointF, Signal,QObject,Slot
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsItem
 from PySide6.QtGui import QBrush, QColor, QPainterPath,QPen
-from graphicItems import TowerItem, EnemyItem, ProjectileItem
+from graphicItems import BasicTower, Rat, ProjectileItem,GhostTowerItem
+from PySide6.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsView
+from PySide6.QtCore import QEvent, QObject, Signal, Slot
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
 '''
+class GameState(QObject):
+    gold_changed = Signal(int)
+    score_changed = Signal(int)
+    lives_changed = Signal(int)
+    level_changed = Signal(int)
+    def __init__(self):
+        super().__init__()
+        self._gold = 100
+        self._score = 0
+        self._lives = 20
+        self._level = 1
+        
+    @property
+    def gold(self):
+        return self._gold
+        
+    @gold.setter
+    def gold(self, value):
+        self._gold = value
+        self.gold_changed.emit(value)
+    
+    @property
+    def score(self):
+        return self._score
+    
+    @score.setter
+    def score(self, value):
+        self._score = value
+        self.score_changed.emit(value)
+    @property
+    def lives(self):
+        return self._lives
+    
+    @lives.setter
+    def lives(self, value):
+        self._lives = value
+        self.lives_changed.emit(value)
+    @property
+    def level(self):
+        return self._level
+    @level.setter
+    def level(self, value):
+        self._level = value
+        self.level_changed.emit(value)
+
+
 class GameScene(QGraphicsScene):
     # Custom signals
     score_changed = Signal(int)
     lives_changed = Signal(int)
-    tower_selected = Signal(object)
 
-    def __init__(self, grid_size=20, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
 
-        self.grid_size = grid_size
         self.game_active = False
-        self.score = 0
-        self.lives = 20
+        self.game_state = GameState()
         
         # Game state containers
         self.game_items = {
@@ -28,7 +73,6 @@ class GameScene(QGraphicsScene):
 
         
         # Setup game systems
-        self._init_grid()
         self._init_path()
         self._setup_timers()
         self._connect_signals()
@@ -94,7 +138,7 @@ class GameScene(QGraphicsScene):
         """Update scene viewport"""
         for item in self.items():
             if item.isVisible():
-                item.setVisible(viewport_rect.intersects(item.sceneBoundingRect()))
+                item.setVisible(viewport_rect.intersects(item.shape()))
 
     # ----------------------
     # Update Subsystems
@@ -105,14 +149,13 @@ class GameScene(QGraphicsScene):
         """Process enemy movement and health"""
         for enemy in self.game_items['enemies']:
             if enemy.health == 0:
-                self.score += enemy.value
+                self.game_state.score += enemy.value
+                self.game_state.gold += enemy.value
                 self.removeItem(enemy)
                 self.game_items['enemies'].remove(enemy)
-                self.score_changed.emit(self.score)
                 continue
             if enemy.pos() == self.path_points[-1]:
-                self.lives -= 1
-                self.lives_changed.emit(self.lives)
+                self.game_state.lives -= 1
                 self.removeItem(enemy)
                 self.game_items['enemies'].remove(enemy)
                 continue
@@ -126,9 +169,10 @@ class GameScene(QGraphicsScene):
                 projectile = tower.create_projectile(enemy.pos())
                 self.add_projectile(projectile)
             tower.update()
-    def _handle_projectile_hit(self, projectile, enemy):
+    def _handle_projectile_hit(self, projectile : ProjectileItem, enemy):
         """Process projectile-enemy collision"""
         enemy._health -= projectile._damage
+        projectile.parentTower.add_kill()
         self.removeItem(projectile)
         self.game_items['projectiles'].remove(projectile)
     def _update_projectiles(self):
@@ -147,20 +191,23 @@ class GameScene(QGraphicsScene):
         for projectile in self.game_items['projectiles']:
             colliding = self.items(projectile.pos())
             for item in colliding:
-                if isinstance(item, EnemyItem):
+                
+                if isinstance(item, Rat):
                     self._handle_projectile_hit(projectile, item)
 
     # ----------------------
     # Item Management
     # ----------------------
-    def add_tower(self, tower, grid_pos):
+    def add_tower(self, tower, pos):
         """Register new tower"""
-        if self._is_valid_placement(grid_pos):
-            self.game_items['towers'].append(tower)
-            self.addItem(tower)
-            self.occupied_cells.add(grid_pos)
-            return True
-        return False
+        new_tower = None
+        if(tower.name == "basic"):
+            new_tower = BasicTower(pos)
+        
+        elif(tower.name == "sniper"):
+            new_tower = BasicTower(pos)
+        self.game_items['towers'].append(new_tower)
+        self.addItem(new_tower)
 
     def add_projectile(self, projectile):
         """Register new projectile"""
@@ -169,7 +216,7 @@ class GameScene(QGraphicsScene):
 
     def spawn_enemy(self):
         """Create and register new enemy"""
-        enemy = EnemyItem(path=self.path_points)
+        enemy = Rat(path=self.path_points)
         self.game_items['enemies'].append(enemy)
         self.addItem(enemy)
         enemy.setPos(self.path_points[0])
@@ -177,40 +224,68 @@ class GameScene(QGraphicsScene):
     # ----------------------
     # User Interaction
     # ----------------------
-    def mousePressEvent(self, event):
-        """Handle tower placement"""
-        if event.button() == Qt.LeftButton:
-            scene_pos = event.scenePos()
-            grid_pos = self._scene_to_grid(scene_pos)
-            
-            if self._is_valid_placement(grid_pos):
-                tower = TowerItem()
-                tower.setPos(scene_pos)
-                self.add_tower(tower, grid_pos)
+    @Slot(dict)
+    def start_tower_placement(self, tower_type):
+        self.placement_ghost = GhostTowerItem(tower_type)
+        self.addItem(self.placement_ghost)
+        self.installEventFilter(self)
+    @Slot(object)
+    def handle_tower_sale(self, tower):
+        """Handle tower sale"""
+        self.removeItem(tower)
+        self.game_items['towers'].remove(tower)
+        self.game_state.gold += tower.cost // 2
+    def handle_tower_upgrade(self, tower):
+        """Handle tower upgrade"""
+        # Implement upgrade logic here
+        pass
 
-        super().mousePressEvent(event)
+
+    def eventFilter(self, source, event):
+        if event.type() == QEvent.GraphicsSceneMouseMove:
+            #Check if in valid position
+            if self.is_valid_position(self.placement_ghost):
+                print("Valid position")
+                self.placement_ghost.valid = True
+            else:
+                print("Invalid position")
+                self.placement_ghost.valid = False
+            self.placement_ghost.setPos(event.scenePos())
+        elif event.type() == QEvent.GraphicsSceneMousePress:
+            if self.placement_ghost.valid:
+                self.finalize_placement(event.scenePos())
+        return super().eventFilter(source, event)
+
+    def finalize_placement(self, pos):
+        if self.is_valid_position(self.placement_ghost):
+            self.add_tower(self.placement_ghost, pos)
+            self.game_state.gold -= self.placement_ghost.cost
+        self.cleanup_placement()
+
+    def cleanup_placement(self):
+        print("Cleaning up placement")
+        self.removeItem(self.placement_ghost)
+        self.placement_ghost = None
+        self.removeEventFilter(self)
+
 
     # ----------------------
     # Helper Methods
     # ----------------------
-    def _scene_to_grid(self, pos):
-        """Convert scene coordinates to grid coordinates"""
-        return (int(pos.x()) // self.grid_size,
-                int(pos.y()) // self.grid_size)
 
-    def _is_valid_placement(self, grid_pos):
-        """Check if grid position is available"""
-        return (
-            grid_pos in self.grid and
-            not self.grid[grid_pos]['occupied'] and
-            self.grid[grid_pos]['walkable']
-        )
+    def is_valid_position(self,check_item):
+        """Check if shape intersects with other item shapes"""
+        for item in self.items():
+            if item.isVisible() and item.collidesWithItem(check_item) and item != check_item:
+                print(f"Collision with {item}")
+                return False
+        return True
 
     def _create_visual_path(self):
         """Generate visible path representation"""
         path = QPainterPath()
+        
         path.moveTo(self.path_points[0])
         for point in self.path_points[1:]:
             path.lineTo(point)
-        
-        self.addPath(path, QPen(Qt.darkGreen, 30))
+        self.addPath(path, QPen(Qt.darkGreen, 20))
