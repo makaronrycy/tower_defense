@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         self.scene = GameScene()
         self.view = GameView(self.scene)
         self.store = TowerStoreWidget(self.scene.game_state)
-        self.tower_overview =TowerOverviewWidget()
+        self.tower_overview =TowerOverviewWidget(self.scene.game_state)
         
         splitter = QSplitter()
         splitter.addWidget(self.tower_overview)
@@ -32,15 +32,20 @@ class MainWindow(QMainWindow):
         #connections
         
         self.scene.game_state.gold_changed.connect(self.store.update_store_ui)
+        self.scene.game_state.gold_changed.connect(self.tower_overview.update_upgrade_ui)
+
         self.scene.game_state.lives_changed.connect(self.store.update_lives_ui)
-        
+        self.scene.tower_selected.connect(self.tower_overview.update_overview_ui)
+
+               
+
         self.store.tower_selected.connect(self.scene.start_tower_placement)
-        self.view.tower_selected.connect(self.tower_overview.update_overview_ui)
         self.tower_overview.tower.kills_changed.connect(self.tower_overview.update_overview_ui)
         
-
         self.tower_overview.sell_tower.connect(self.scene.handle_tower_sale)
         self.tower_overview.upgrade_tower.connect(self.scene.handle_tower_upgrade)
+        self.tower_overview.tower_deselected.connect(self.scene.handle_tower_deselection)
+        self.scene.tower_selected.connect(self.scene.handle_tower_selection)
         
         QTimer.singleShot(1000, self.scene.start_game)
 

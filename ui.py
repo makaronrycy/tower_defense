@@ -10,22 +10,24 @@ TOWER_TYPES = {
     "basic": {
         "name": "Basic Tower",
         "type": "basic",
-        "cost": 100,
+        "cost": 20,
         "icon": "path/to/basic_tower_icon.png",
         "description": "Basic tower with moderate damage."
     },
-    "sniper": {
-        "name": "Sniper Tower",
-        "type": "sniper",
+    "bomb": {
+        "name": "Bomb Tower",
+        "type": "bomb",
         "cost": 200,
         "icon": "path/to/sniper_tower_icon.png",
-        "description": "Long-range tower with high damage."
+        "description": "Bomb tower with splash damage."
     },
 }
 
 
 class TowerStoreWidget(QWidget):
     tower_selected = Signal(dict)  # Emit when a tower is selected
+    wave_started = Signal()  # Emit when a wave starts
+    game_paused = Signal()  # Emit when the game is paused
     def __init__(self, game_state : GameState):
         super().__init__()
         self.game_state = game_state
@@ -51,7 +53,11 @@ class TowerStoreWidget(QWidget):
             btn.clicked.connect(lambda _, t=tower: self.handle_tower_selection(t))
             self.tower_buttons.append(btn)
             layout.addWidget(btn)
-        
+        self.waveButton = QPushButton("Start Wave")
+        self.waveButton.clicked.connect(self.handle_wave_start)
+        self.pauseButton = QPushButton("Pause")
+        self.pauseButton.clicked.connect(self.handle_pause)
+        layout.addWidget(btn)
         self.setLayout(layout)
 
     def create_button_content(self, tower):
@@ -62,7 +68,16 @@ class TowerStoreWidget(QWidget):
             <br>Cost: {tower["cost"]}g
         </div>
         """
-
+    def handle_wave_start(self):
+        """Emit signal when a wave starts"""
+        self.wave_started.emit()
+    def handle_pause(self):
+        """Emit signal when the game is paused"""
+        if self.pauseButton.text() == "Resume":
+            self.pauseButton.setText("Pause")
+        else:
+            self.pauseButton.setText("Resume")
+        self.game_paused.emit()
     def handle_tower_selection(self, tower):
         """Emit signal when a tower is selected"""
         self.tower_selected.emit(tower)
@@ -79,9 +94,12 @@ class TowerStoreWidget(QWidget):
 class TowerOverviewWidget(QWidget):
     sell_tower = Signal(object)  # Emit when the sell button is clicked
     upgrade_tower = Signal(object)  # Emit when the upgrade button is clicked
-    def __init__(self):
+    tower_deselected = Signal()  # Emit when a tower is selected
+    def __init__(self,game_state : GameState):
         super().__init__()
         self.tower= BaseTowerItem(QPoint(0.0,0.0))
+        self.game_state = game_state
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.hide()
         self.init_ui()
     def init_ui(self):
@@ -91,11 +109,11 @@ class TowerOverviewWidget(QWidget):
         self.name_label = QLabel("Tower Name")
         self.kills_label = QLabel("Kills: 0")
 
-        self.sell_btn = QPushButton("Sell")
+        self.sell_btn = QPushButton(f"Sell:{self.tower.cost}")
         self.sell_btn.clicked.connect(self.handle_sell_tower)
-        self.upgrade_btn = QPushButton("Upgrade")
+        self.upgrade_btn = QPushButton(f"Upgrade:{self.tower.upgrade_cost} ")
         self.upgrade_btn.clicked.connect(self.handle_upgrade_tower)
-        self.upgrade_btn.setEnabled(False)
+        self.upgrade_btn.setEnabled(self.game_state.gold >= self.tower.upgrade_cost)
         
         layout.addWidget(self.name_label)
         layout.addWidget(self.kills_label)
@@ -106,28 +124,38 @@ class TowerOverviewWidget(QWidget):
     def update_overview_ui(self, tower):
         """Display tower overview"""
         if(tower is None):
-            self.tower.show_range = False
             self.clear()
             return
         self.tower = tower
         self.name_label.setText(f"Name: {tower.name}")  
+        self.sell_btn.setText(f"Sell: {tower.cost // 2}")
+        self.upgrade_btn.setText(f"Upgrade: {tower.upgrade_cost}")
         self.kills_label.setText(f"Kills: {tower.kills}")
         self.show()
+    @Slot(int)
+    def update_upgrade_ui(self, gold):
+        if self.tower:
+            self.upgrade_btn.setEnabled(gold >= self.tower.upgrade_cost)
+        else:
+            self.upgrade_btn.setEnabled(False)
     def handle_sell_tower(self):
         """Handle tower sell action"""
+
         self.sell_tower.emit(self.tower)
+        self.tower_deselected.emit()
         self.hide()
     def handle_upgrade_tower(self):
         """Handle tower upgrade action"""
         self.upgrade_tower.emit(self.tower)
+        self.tower_deselected.emit()
         self.hide()
     def clear(self):
         self.tower = None
+        self.tower_deselected.emit()
         self.hide()
         
 class GameView(QGraphicsView):
-    viewport_changed = Signal(QRectF)  # Emits visible area changes
-    tower_selected = Signal(QGraphicsItem)  # Emits when a tower is selected
+    viewport_changed = Signal(QRectF)  # Emits visible area changes 
     
     def __init__(self, scene, parent=None):
         super().__init__(parent)
@@ -139,7 +167,6 @@ class GameView(QGraphicsView):
         
         # Initialize view settings
         self._setup_view()
-        self._connect_signals()
 
     def _setup_view(self):
         """Configure view rendering and behavior"""
@@ -161,12 +188,6 @@ class GameView(QGraphicsView):
             self.setViewport(QOpenGLWidget())
         except ImportError:
             pass
-
-    def _connect_signals(self):
-        """Connect internal signals"""
-        self.scene().selectionChanged.connect(self._handle_selection)
-        self.viewport_changed.connect(self._scene.update_viewport)
-
     # --------------------------
     # View Manipulation Methods
     # --------------------------
@@ -268,14 +289,14 @@ class GameView(QGraphicsView):
         else:
             self.setRenderHints(self.renderHints() & ~QPainter.Debug)
 
-    def _handle_selection(self):
-        """Forward selection changes to scene"""
-        selected = self.scene().selectedItems()
-        if selected and isinstance(selected[0], BaseTowerItem):
-            print(f"Selected item: {selected[0].__class__.__name__}")
-            self.tower_selected.emit(selected[0])
-            pass
-        else:
-            self.tower_selected.emit(None)
+    # def _handle_selection(self):
+    #     """Forward selection changes to scene"""
+    #     selected = self.scene().selectedItems()
+    #     if selected and isinstance(selected[0], BaseTowerItem):
+    #         print(f"Selected item: {selected[0].__class__.__name__}")
+    #         self.tower_selected.emit(selected[0])
+    #         pass
+    #     else:
+    #         self.tower_selected.emit(None)
     
         

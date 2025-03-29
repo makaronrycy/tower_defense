@@ -1,7 +1,8 @@
 from PySide6.QtCore import Qt, QTimer, QRectF, QPointF, Signal,QObject,Slot
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsItem
 from PySide6.QtGui import QBrush, QColor, QPainterPath,QPen
-from graphicItems import BasicTower, Rat, ProjectileItem,GhostTowerItem
+from graphicItems import Rat, ProjectileItem,GhostTowerItem,RangeIndicator ,BombProjectile,ExplosionProjectile
+from graphicItems import BombTower,BasicTower,GhostTowerItem
 from PySide6.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsView
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
 '''
@@ -14,10 +15,12 @@ class GameState(QObject):
     level_changed = Signal(int)
     def __init__(self):
         super().__init__()
-        self._gold = 100
+        self._gold = 1000
         self._score = 0
         self._lives = 20
         self._level = 1
+        self._wave = 1
+        self._wave_started = False
         
     @property
     def gold(self):
@@ -55,6 +58,7 @@ class GameState(QObject):
 
 class GameScene(QGraphicsScene):
     # Custom signals
+    tower_selected = Signal(object)
     score_changed = Signal(int)
     lives_changed = Signal(int)
 
@@ -70,7 +74,7 @@ class GameScene(QGraphicsScene):
             "enemies": [],
             "projectiles": []
         }
-
+        self.current_range_indicator = None
         
         # Setup game systems
         self._init_path()
@@ -114,7 +118,7 @@ class GameScene(QGraphicsScene):
     def _connect_signals(self):
         """Connect internal signals"""
         #self.selectionChanged.connect(self._handle_selection_change)
-
+        
     # ----------------------
     # Core Game Loop Methods
     # ----------------------
@@ -148,7 +152,7 @@ class GameScene(QGraphicsScene):
     def _update_enemies(self):
         """Process enemy movement and health"""
         for enemy in self.game_items['enemies']:
-            if enemy.health == 0:
+            if enemy.health <= 0:
                 self.game_state.score += enemy.value
                 self.game_state.gold += enemy.value
                 self.removeItem(enemy)
@@ -169,19 +173,29 @@ class GameScene(QGraphicsScene):
                 projectile = tower.create_projectile(enemy.pos())
                 self.add_projectile(projectile)
             tower.update()
-    def _handle_projectile_hit(self, projectile : ProjectileItem, enemy):
+    def _handle_projectile_hit(self, projectile, enemy):
         """Process projectile-enemy collision"""
+        
         enemy._health -= projectile._damage
-        projectile.parentTower.add_kill()
+        projectile._pierce -= 1
+        if enemy._health <= 0:
+            projectile.parentTower.add_kill()
+    def _handle_projectile_death(self, projectile):
+        """Process projectile expiration"""
+        if isinstance(projectile, BombProjectile):
+            explosion = ExplosionProjectile(projectile.pos(),None,projectile.parentTower)
+            self.add_projectile(explosion)
+            
         self.removeItem(projectile)
         self.game_items['projectiles'].remove(projectile)
     def _update_projectiles(self):
         """Move projectiles and check lifespan"""
         for projectile in self.game_items['projectiles']:
-            projectile.update_position()
+            projectile.update()
             if projectile.is_expired():
-                self.removeItem(projectile)
-                self.game_items['projectiles'].remove(projectile)
+                self._handle_projectile_death(projectile)
+
+            
 
     # ----------------------
     # Collision Detection
@@ -189,10 +203,10 @@ class GameScene(QGraphicsScene):
     def _check_collisions(self):
         """Detect and handle collisions"""
         for projectile in self.game_items['projectiles']:
-            colliding = self.items(projectile.pos())
+            colliding = self.collidingItems(projectile)
             for item in colliding:
-                
                 if isinstance(item, Rat):
+                    print(f"{projectile.__class__.__name__} hit {item.__class__.__name__}")
                     self._handle_projectile_hit(projectile, item)
 
     # ----------------------
@@ -204,10 +218,13 @@ class GameScene(QGraphicsScene):
         if(tower.name == "basic"):
             new_tower = BasicTower(pos)
         
-        elif(tower.name == "sniper"):
-            new_tower = BasicTower(pos)
+        elif(tower.name == "bomb"):
+            new_tower = BombTower(pos)
+        elif(tower.name == "booster"):
+            new_tower = BoosterTower(pos)
         self.game_items['towers'].append(new_tower)
         self.addItem(new_tower)
+        
 
     def add_projectile(self, projectile):
         """Register new projectile"""
@@ -235,11 +252,28 @@ class GameScene(QGraphicsScene):
         self.removeItem(tower)
         self.game_items['towers'].remove(tower)
         self.game_state.gold += tower.cost // 2
+    @Slot(object)
     def handle_tower_upgrade(self, tower):
         """Handle tower upgrade"""
+        if self.game_state.gold >= tower.upgrade_cost:
+            self.game_state.gold -= tower.upgrade_cost
+            tower.upgrade()
         # Implement upgrade logic here
         pass
-
+    @Slot(object)
+    def handle_tower_selection(self, tower):
+        """Display tower range"""
+        if self.current_range_indicator:
+            self.removeItem(self.current_range_indicator)
+        if tower:
+            self.current_range_indicator = RangeIndicator(tower)
+            self.addItem(self.current_range_indicator)
+    @Slot(object)
+    def handle_tower_deselection(self):
+        """Remove tower range display"""
+        if self.current_range_indicator:
+            self.removeItem(self.current_range_indicator)
+            self.current_range_indicator = None
 
     def eventFilter(self, source, event):
         if event.type() == QEvent.GraphicsSceneMouseMove:
@@ -276,16 +310,15 @@ class GameScene(QGraphicsScene):
     def is_valid_position(self,check_item):
         """Check if shape intersects with other item shapes"""
         for item in self.items():
-            if item.isVisible() and item.collidesWithItem(check_item) and item != check_item:
+            if item.isVisible() and item.collidesWithItem(check_item) and not isinstance(item, RangeIndicator) and not isinstance(item, GhostTowerItem) and not isinstance(item, ProjectileItem):
                 print(f"Collision with {item}")
                 return False
         return True
 
     def _create_visual_path(self):
         """Generate visible path representation"""
-        path = QPainterPath()
-        
-        path.moveTo(self.path_points[0])
-        for point in self.path_points[1:]:
-            path.lineTo(point)
-        self.addPath(path, QPen(Qt.darkGreen, 20))
+        for i,point in enumerate(self.path_points[1:]):
+            line = QPainterPath()
+            line.moveTo(self.path_points[i])
+            line.lineTo(point)
+            self.addPath(line, QPen(Qt.darkGreen, 20))
