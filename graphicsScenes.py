@@ -243,7 +243,9 @@ class GameScene(QGraphicsScene):
         """Handle tower targeting and shooting"""
         for tower in self.game_items['towers']:
             enemy = tower.acquire_target(self.game_items['enemies'])
+            
             if tower.should_fire() and enemy is not None:
+                
                 tower.set_cooldown()
                 if isinstance(tower, BasicTower):
                     projectile = BasicProjectile(tower.pos(), enemy.pos(), tower,self.animations["basic_projectile"])
@@ -354,9 +356,9 @@ class GameScene(QGraphicsScene):
         """Handle tower upgrade"""
         if self.game_state.gold >= tower.upgrade_cost:
             self.game_state.gold -= tower.upgrade_cost
-            tower.upgrade()
-        # Implement upgrade logic here
-        pass
+            # Pass any value - it's not used but required for the setter
+            tower.upgrade_level = 0  # The actual value doesn't matter
+            tower.upgrade()  # Call the tower's upgrade method to update stats
     @Slot(object)
     def handle_tower_selection(self, tower):
         """Display tower range"""

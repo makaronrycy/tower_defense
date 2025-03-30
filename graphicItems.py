@@ -32,7 +32,8 @@ class BaseItem(QGraphicsObject):
                 }
             }
         else:
-            self.animations = AnimationComponent(animation["spritesheet"],animation["anim_data"])
+            self.animations = AnimationComponent(animation["spritesheet"],animation["anim_data"],)
+        
         self.current_frame = QPixmap()
         self.facing_right = True
 
@@ -156,7 +157,7 @@ class PathItem(QGraphicsItem):
 
 class BaseTowerItem(BaseItem):
     kills_changed = Signal(int) # Emit when kills change
-    def __init__(self,pos,animation = None):
+    def __init__(self, pos, animation=None, max_upgrade_level=3):
         super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
@@ -175,8 +176,18 @@ class BaseTowerItem(BaseItem):
         self._cooldown = 0
         self.kills = 0
         self.upgrade_cost = 20
+        self._upgrade_level = 0
         self._boost_modifier = 1.0
+        self.max_upgrade_level = max_upgrade_level
         
+        # Store upgrade sprites
+        self.upgrade_sprites = []
+        if animation is not None:
+            # Start from 1 and go to max_upgrade_level
+            for upgrade in range(1, max_upgrade_level + 1):
+                if upgrade in animation:  # Check if this level exists
+                    self.upgrade_sprites.append(animation[upgrade])
+
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSelectedChange:
             self.scene().tower_selected.emit(self if value else None)  # Emit signal when tower is selected
@@ -199,7 +210,6 @@ class BaseTowerItem(BaseItem):
         """Must implement in subclasses"""
         pass
     def update(self) -> None:
-
         if self._cooldown > 0:
             self._cooldown -= 1
 
@@ -208,8 +218,13 @@ class BaseTowerItem(BaseItem):
             if self.distance_between_points(self.pos(),enemy.pos()) < self.range:
                 self._target = enemy
                 return enemy
+        if(self.animations.current_anim == "attack"):
+            self.animations.set_animation("idle")
     def should_fire(self):
-        return True if self._target and self._cooldown == 0 else False
+        if (self._target and self._cooldown == 0):
+            self.animations.set_animation("attack")
+            return True
+        return False
     
 
     def add_kill(self):
@@ -228,6 +243,24 @@ class BaseTowerItem(BaseItem):
         self._damage = self._damage * value
         self._upgrade_cost = self._upgrade_cost / (value/1.5)
         self._fire_rate = self._fire_rate / value
+    @Property(float)
+    def upgrade_level(self) -> int:
+        return self._upgrade_level
+
+    @upgrade_level.setter
+    def upgrade_level(self, value) -> None:
+        # Process the upgrade
+        self._upgrade_level += 1
+        
+        # Check if we've reached the maximum level
+        if self._upgrade_level <= len(self.upgrade_sprites):
+            # Access the appropriate sprite for this level (subtract 1 since arrays are 0-indexed)
+            new_spritesheet = self.upgrade_sprites[self._upgrade_level - 1]
+            # Update the animation component with the new spritesheet
+            self.animations.spritesheet = new_spritesheet
+            print(f"Tower upgraded to level {self._upgrade_level}")
+        else:
+            print(f"Tower already at maximum level ({self._upgrade_level})")
 class BaseEnemyItem(BaseItem):
     def __init__(self,path,animation = None):
         super().__init__(animation=animation)

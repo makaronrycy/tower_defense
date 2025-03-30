@@ -138,7 +138,6 @@ def get_all_animations():
 
     booster_tower_animation = AsepriteLoader("spritesheets/booster_tower.json")
     booster_tower_spritesheet = SpriteSheet("spritesheets/booster_tower.png")
-
     booster_tower_spritesheet_1 = SpriteSheet("spritesheets/booster_tower_1.png")
     booster_tower_spritesheet_2 = SpriteSheet("spritesheets/booster_tower_2.png")
     booster_tower_spritesheet_3 = SpriteSheet("spritesheets/booster_tower_3.png")
@@ -159,22 +158,22 @@ def get_all_animations():
     animations = {
         "bomb_tower":{
             "spritesheet" :bomb_tower_spritesheet,
-            "upgrade1": bomb_tower_spritesheet_1,
-            "upgrade2": bomb_tower_spritesheet_2,
+            1: bomb_tower_spritesheet_1,
+            2: bomb_tower_spritesheet_2,
             "anim_data": bomb_tower_animation.get_anim_data()
         }
         ,"basic_tower":{
             "spritesheet" :basic_tower_spritesheet,
-            "upgrade1": basic_tower_spritesheet_1,
-            "upgrade2": basic_tower_spritesheet_2,
-            "upgrade3": basic_tower_spritesheet_3,
+            1: basic_tower_spritesheet_1,
+            2: basic_tower_spritesheet_2,
+            3: basic_tower_spritesheet_3,
             "anim_data": basic_tower_animation.get_anim_data()
         }
         ,"booster_tower":{
             "spritesheet" :booster_tower_spritesheet,
-            "upgrade1": booster_tower_spritesheet_1,
-            "upgrade2": booster_tower_spritesheet_2,
-            "upgrade3": booster_tower_spritesheet_3,
+            1: booster_tower_spritesheet_1,
+            2: booster_tower_spritesheet_2,
+            3: booster_tower_spritesheet_3,
             "anim_data": booster_tower_animation.get_anim_data()
         }
         ,"rat":{

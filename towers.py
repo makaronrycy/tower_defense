@@ -59,7 +59,7 @@ class BasicTower(BaseTowerItem):
 
 class BombTower(BaseTowerItem):
     def __init__(self,pos,animation = None):
-        super().__init__(pos=pos,animation=animation)
+        super().__init__(pos=pos,animation=animation,max_upgrade_level=2)
         self.set_z_value(1)
         self.setPos(pos)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -73,7 +73,12 @@ class BombTower(BaseTowerItem):
         self._fire_rate = 200
         self._cooldown = 0
         self.upgrade_cost = 30
-
+    def upgrade(self):
+        self._damage += 10
+        self.range += 30
+        self._fire_rate -= 20
+        self.cost += 30
+        print(f"Upgraded {self.name}: Damage: {self._damage}, Range: {self.range}, Fire Rate: {self._fire_rate}")
     def set_cooldown(self):
         self._cooldown = self._fire_rate
 class BoosterTower(BaseTowerItem):
@@ -95,9 +100,15 @@ class BoosterTower(BaseTowerItem):
         self.boost_value = 1.5
         self.boosted_towers = []
     def upgrade(self):
+        self.upgrade_cost += 20
+        self.upgrade_level += 1
         self.range += 20
+        self._fire_rate -= 10
+        self.cost += 20
         
     def create_projectile(self,enemyPos):
+        pass
+    def set_cooldown(self):
         pass
     def boost_tower(self,tower:BaseTowerItem):
         if tower not in self.boosted_towers:
