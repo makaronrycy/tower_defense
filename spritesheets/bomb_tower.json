@@ -131,29 +131,8 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.2.9-x64",
-  "image": "C:\\Users\\maury\\Documents\\sprite\\bomb_tower.png",
   "format": "RGBA8888",
   "size": { "w": 512, "h": 32 },
-  "scale": "1",
-  "frameTags": [
-   { "name": "Idle", "from": 0, "to": 3, "direction": "forward" },
-   { "name": "Attack", "from": 4, "to": 15, "direction": "forward" }
-  ],
-  "layers": [
-   { "name": "cannon", "opacity": 255, "blendMode": "normal" },
-   { "name": "Layer 1", "opacity": 255, "blendMode": "normal" },
-   { "name": "wheel", "opacity": 255, "blendMode": "normal" },
-   { "name": "hand_right", "opacity": 255, "blendMode": "normal" },
-   { "name": "torso", "opacity": 255, "blendMode": "normal" },
-   { "name": "tail", "opacity": 255, "blendMode": "normal" },
-   { "name": "legs", "opacity": 255, "blendMode": "normal" },
-   { "name": "head", "opacity": 255, "blendMode": "normal" },
-   { "name": "hand_left", "opacity": 255, "blendMode": "normal" },
-   { "name": "Upgrade1", "opacity": 255, "blendMode": "normal" },
-   { "name": "Upgrade2", "opacity": 255, "blendMode": "normal" },
-   { "name": "Upgrade3", "opacity": 255, "blendMode": "normal" }
-  ],
-  "slices": [
-  ]
+  "scale": "1"
  }
 }
