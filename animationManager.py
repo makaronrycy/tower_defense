@@ -8,6 +8,9 @@ class SpriteSheet:
         """Get specific frame from sheet"""
         return self.sheet.copy(rect)
 
+
+
+
 class AnimationComponent:
     def __init__(self, spritesheet :SpriteSheet, animations):
         """
@@ -92,8 +95,19 @@ class AsepriteLoader:
         with open(json_file) as f:
             self.data = json.load(f)
             
-        self.spritesheet = QPixmap(self.data['meta']['image'])
-
+    def get_tileset_data(self):
+        """
+        structure:
+            {
+                "tileset_name": QRect(x,y,w,h)
+            }
+        """
+        tileset_data = {}
+        for slice in self.data["meta"]["slices"]:
+            tile_bounds = slice["keys"][0]["bounds"]
+            tileset_data[slice["name"]] = QRect(tile_bounds["x"], tile_bounds["y"], tile_bounds["w"], tile_bounds["h"])
+        print(tileset_data)
+        return tileset_data
     def get_anim_data(self):
         
         animation_data = {}
@@ -109,6 +123,87 @@ class AsepriteLoader:
                 animation_data[tags["name"]][i]["duration"] = (frames[i+start]["duration"]) #in ms
             print(animation_data)
         return animation_data
+
+def get_all_animations():
+    bomb_tower_animation = AsepriteLoader("spritesheets/bomb_tower.json")
+    bomb_tower_spritesheet = SpriteSheet("spritesheets/bomb_tower.png")
+    bomb_tower_spritesheet_1 = SpriteSheet("spritesheets/bomb_tower_1.png")
+    bomb_tower_spritesheet_2 = SpriteSheet("spritesheets/bomb_tower_2.png")
+
+    basic_tower_animation = AsepriteLoader("spritesheets/basic_tower.json")
+    basic_tower_spritesheet = SpriteSheet("spritesheets/basic_tower.png")
+    basic_tower_spritesheet_1 = SpriteSheet("spritesheets/basic_tower_1.png")
+    basic_tower_spritesheet_2 = SpriteSheet("spritesheets/basic_tower_2.png")
+    basic_tower_spritesheet_3 = SpriteSheet("spritesheets/basic_tower_3.png")
+
+    booster_tower_animation = AsepriteLoader("spritesheets/booster_tower.json")
+    booster_tower_spritesheet = SpriteSheet("spritesheets/booster_tower.png")
+
+    booster_tower_spritesheet_1 = SpriteSheet("spritesheets/booster_tower_1.png")
+    booster_tower_spritesheet_2 = SpriteSheet("spritesheets/booster_tower_2.png")
+    booster_tower_spritesheet_3 = SpriteSheet("spritesheets/booster_tower_3.png")
+
+    rat_animation = AsepriteLoader("spritesheets/rat.json")
+    rat_spritesheet = SpriteSheet("spritesheets/rat.png")
+    fast_rat_animation = AsepriteLoader("spritesheets/fast_rat.json")
+    fast_rat_spritesheet = SpriteSheet("spritesheets/fast_rat.png")
+    giant_rat_animation = AsepriteLoader("spritesheets/giant_rat.json")
+    giant_rat_spritesheet = SpriteSheet("spritesheets/giant_rat.png")
+    basic_projectile_animation = AsepriteLoader("spritesheets/basic_projectile.json")
+    basic_projectile_spritesheet = SpriteSheet("spritesheets/basic_projectile.png")
+    bomb_projectile_animation = AsepriteLoader("spritesheets/bomb_projectile.json")
+    bomb_projectile_spritesheet = SpriteSheet("spritesheets/bomb_projectile.png")
+    explosion_projectile_animation = AsepriteLoader("spritesheets/explosion_projectile.json")
+    explosion_projectile_spritesheet = SpriteSheet("spritesheets/explosion_projectile.png")
+
+    animations = {
+        "bomb_tower":{
+            "spritesheet" :bomb_tower_spritesheet,
+            "upgrade1": bomb_tower_spritesheet_1,
+            "upgrade2": bomb_tower_spritesheet_2,
+            "anim_data": bomb_tower_animation.get_anim_data()
+        }
+        ,"basic_tower":{
+            "spritesheet" :basic_tower_spritesheet,
+            "upgrade1": basic_tower_spritesheet_1,
+            "upgrade2": basic_tower_spritesheet_2,
+            "upgrade3": basic_tower_spritesheet_3,
+            "anim_data": basic_tower_animation.get_anim_data()
+        }
+        ,"booster_tower":{
+            "spritesheet" :booster_tower_spritesheet,
+            "upgrade1": booster_tower_spritesheet_1,
+            "upgrade2": booster_tower_spritesheet_2,
+            "upgrade3": booster_tower_spritesheet_3,
+            "anim_data": booster_tower_animation.get_anim_data()
+        }
+        ,"rat":{
+            "spritesheet" :rat_spritesheet,
+            "anim_data": rat_animation.get_anim_data()
+        }
+        ,"fast_rat":{
+            "spritesheet" :fast_rat_spritesheet,
+            "anim_data": fast_rat_animation.get_anim_data()
+        }
+        ,"giant_rat":{
+            "spritesheet" :giant_rat_spritesheet,
+            "anim_data": giant_rat_animation.get_anim_data()
+        }
+        ,"basic_projectile":{
+            "spritesheet" :basic_projectile_spritesheet,
+            "anim_data": basic_projectile_animation.get_anim_data()
+        }
+        ,"bomb_projectile":{
+            "spritesheet" :bomb_projectile_spritesheet,
+            "anim_data": bomb_projectile_animation.get_anim_data()
+        }
+        ,"explosion_projectile":{
+            "spritesheet" :explosion_projectile_spritesheet,
+            "anim_data": explosion_projectile_animation.get_anim_data()
+        }
+    }
+    return animations
+
 
 
 

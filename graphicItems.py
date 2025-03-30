@@ -100,8 +100,42 @@ class BaseItem(QGraphicsObject):
     @rotation_angle.setter
     def rotation_angle(self, angle: float) -> None:
         self.setRotation(angle)
-    
-    
+
+class MapItem(QGraphicsItem):
+    def __init__(self, pixmap):
+        super().__init__()
+        self._image :QPixmap = pixmap
+        self.setZValue(-10)  # Below other items
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(0, 0, self._image.width(), self._image.height())
+
+    def paint(self, painter, option, widget):
+        painter.drawPixmap(self._image.rect().topLeft(), self._image)
+class ObstacleItem(QGraphicsItem):
+    def __init__(self, pixmap):
+        super().__init__()
+        self._image = pixmap
+        self.setZValue(-1)  # Below other items
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(0, 0, self._image.width(), self._image.height())
+
+    def paint(self, painter, option, widget):
+        painter.drawPixmap(self._image.rect().topLeft(), self._image)
+class PathItem(QGraphicsItem):
+    def __init__(self, pixmap):
+        super().__init__()
+        self._image = pixmap
+        self.setZValue(-1)  # Below other items
+
+    def boundingRect(self) -> QRectF:
+        return QRectF(0, 0, self._image.width(), self._image.height())
+
+    def paint(self, painter, option, widget):
+        painter.drawPixmap(self._image.rect().topLeft(), self._image)
+        
+        
 
 class BaseTowerItem(BaseItem):
     kills_changed = Signal(int) # Emit when kills change
@@ -243,7 +277,7 @@ class ProjectileItem(BaseItem):
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
         painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
-        pic = self.animations.get_current_frame().scaled(self._radius*2,self._radius*2,Qt.KeepAspectRatio,Qt.SmoothTransformation)
+        pic = self.animations.get_current_frame()
         painter.drawPixmap(
             pic.rect().topLeft(),
             pic

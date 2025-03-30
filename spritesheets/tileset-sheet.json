@@ -1,0 +1,35 @@
+{ "frames": {
+   "tileset-sheet.png": {
+    "frame": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 128, "h": 128 },
+    "sourceSize": { "w": 128, "h": 128 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.2.9-x64",
+  "image": "C:\\Users\\maury\\Documents\\sprite\\tileset-sheet-sheet.png",
+  "format": "RGBA8888",
+  "size": { "w": 128, "h": 128 },
+  "scale": "1",
+  "slices": [
+   { "name": "big_obstacle", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 0, "w": 48, "h": 64 } }] },
+   { "name": "small_obstacle", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 0, "y": 64, "w": 16, "h": 16 } }] },
+   { "name": "flower2", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 32, "y": 80, "w": 16, "h": 16 } }] },
+   { "name": "flower1", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 48, "y": 64, "w": 16, "h": 16 } }] },
+   { "name": "path_l", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 64, "y": 32, "w": 16, "h": 16 } }] },
+   { "name": "path_lu", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 64, "y": 16, "w": 16, "h": 16 } }] },
+   { "name": "path_ld", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 64, "y": 48, "w": 16, "h": 16 } }] },
+   { "name": "path_c", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 80, "y": 32, "w": 16, "h": 16 } }] },
+   { "name": "path_d", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 80, "y": 48, "w": 16, "h": 16 } }] },
+   { "name": "path_rd", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 112, "y": 48, "w": 16, "h": 16 } }] },
+   { "name": "path_r", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 112, "y": 32, "w": 16, "h": 16 } }] },
+   { "name": "path_ru", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 112, "y": 16, "w": 16, "h": 16 } }] },
+   { "name": "path_u", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 96, "y": 16, "w": 16, "h": 16 } }] },
+   { "name": "ground1", "color": "#0000ffff", "keys": [{ "frame": 0, "bounds": {"x": 48, "y": 0, "w": 16, "h": 16 } }] }
+  ]
+ }
+}

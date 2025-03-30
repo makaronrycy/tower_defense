@@ -3,12 +3,13 @@ from PySide6.QtWidgets import QGraphicsScene, QGraphicsItem
 from PySide6.QtGui import QBrush, QColor, QPainterPath,QPen
 from PySide6.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsView
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
-
 from graphicItems import GhostTowerItem ,BaseItem, BaseTowerItem, RangeIndicator, ProjectileItem
+from graphicItems import  PathItem, ObstacleItem, MapItem
 from towers import BasicTower, BombTower, BoosterTower,BombProjectile, ExplosionProjectile,BasicProjectile
 from enemies import Rat, FastRat, GiantRat
-
-from animationManager import AsepriteLoader,SpriteSheet
+from map_generator import MapGenerator,MapGraphicsManager
+from animationManager import AsepriteLoader,SpriteSheet, get_all_animations
+from tileset import get_tileset
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
 '''
@@ -79,104 +80,60 @@ class GameScene(QGraphicsScene):
             "enemies": [],
             "projectiles": []
         }
+        self.path_points = []
         self.current_range_indicator = None
-        
+        self.animations = get_all_animations()
+        self.tileset = get_tileset()
         # Setup game systems
         self._init_path()
         self._setup_timers()
-        self._prepare_animations()
+        self._map_init()
         self._connect_signals()
         self._background = QBrush(QColor(50, 50, 50))
         self.setBackgroundBrush(self._background)
+        
     # ----------------------
     # Initialization Methods
     # ----------------------
-    def _prepare_animations(self):
-        # Load animations here
-        bomb_tower_animation = AsepriteLoader("spritesheets/bomb_tower.json")
-        bomb_tower_spritesheet = SpriteSheet("spritesheets/bomb_tower.png")
+    def _map_init(self):
+        """Initialize grid and path system"""
+        self.map_generator = MapGenerator(30,30)
+        self.map_graphics_manager = MapGraphicsManager(self.map_generator.grid, 16, self.tileset)
+        for item in self.map_graphics_manager.create_items():
+            self.addItem(item)
+        #self._init_grid()
+        for p in self.map_generator.path:
+            self.path_points.append(self.grid_to_scene(p))
+        self._init_path()
 
-        basic_tower_animation = AsepriteLoader("spritesheets/basic_tower.json")
-        basic_tower_spritesheet = SpriteSheet("spritesheets/basic_tower.png")
-
-        booster_tower_animation = AsepriteLoader("spritesheets/booster_tower.json")
-        booster_tower_spritesheet = SpriteSheet("spritesheets/booster_tower.png")
-
-        rat_animation = AsepriteLoader("spritesheets/rat.json")
-        rat_spritesheet = SpriteSheet("spritesheets/rat.png")
-
-        fast_rat_animation = AsepriteLoader("spritesheets/fast_rat.json")
-        fast_rat_spritesheet = SpriteSheet("spritesheets/fast_rat.png")
-
-        giant_rat_animation = AsepriteLoader("spritesheets/giant_rat.json")
-        giant_rat_spritesheet = SpriteSheet("spritesheets/giant_rat.png")
-
-        basic_projectile_animation = AsepriteLoader("spritesheets/basic_projectile.json")
-        basic_projectile_spritesheet = SpriteSheet("spritesheets/basic_projectile.png")
-
-        bomb_projectile_animation = AsepriteLoader("spritesheets/bomb_projectile.json")
-        bomb_projectile_spritesheet = SpriteSheet("spritesheets/bomb_projectile.png")
-
-        explosion_projectile_animation = AsepriteLoader("spritesheets/explosion_projectile.json")
-        explosion_projectile_spritesheet = SpriteSheet("spritesheets/explosion_projectile.png")
-        
-        self.animations = {
-            "bomb_tower":{
-                "spritesheet" :bomb_tower_spritesheet,
-                "anim_data": bomb_tower_animation.get_anim_data()
-            }
-            ,"basic_tower":{
-                "spritesheet" :basic_tower_spritesheet,
-                "anim_data": basic_tower_animation.get_anim_data()
-            }
-            ,"booster_tower":{
-                "spritesheet" :booster_tower_spritesheet,
-                "anim_data": booster_tower_animation.get_anim_data()
-            }
-            ,"rat":{
-                "spritesheet" :rat_spritesheet,
-                "anim_data": rat_animation.get_anim_data()
-            }
-            ,"fast_rat":{
-                "spritesheet" :fast_rat_spritesheet,
-                "anim_data": fast_rat_animation.get_anim_data()
-            }
-            ,"giant_rat":{
-                "spritesheet" :giant_rat_spritesheet,
-                "anim_data": giant_rat_animation.get_anim_data()
-            }
-            ,"basic_projectile":{
-                "spritesheet" :basic_projectile_spritesheet,
-                "anim_data": basic_projectile_animation.get_anim_data()
-            }
-            ,"bomb_projectile":{
-                "spritesheet" :bomb_projectile_spritesheet,
-                "anim_data": bomb_projectile_animation.get_anim_data()
-            }
-            ,"explosion_projectile":{
-                "spritesheet" :explosion_projectile_spritesheet,
-                "anim_data": explosion_projectile_animation.get_anim_data()
-            }
-        }
     def _init_grid(self):
         """Create visual/logical grid system"""
         self.grid = {}
-        cell_size = 40  # Pixels per grid cell
+        cell_size = 16  # Pixels per grid cell
         for x in range(0, 800, cell_size):
             for y in range(0, 600, cell_size):
-                self.grid[(x//cell_size, y//cell_size)] = {
-                    'occupied': False,
-                    'walkable': True
-                }
-
+                rect = QRectF(x, y, cell_size, cell_size)
+                self.grid[(x, y)] = rect
+                # Draw grid cells (optional for debugging)
+                # path = QPainterPath()
+                # path.addRect(rect)
+                # self.addPath(path, QPen(QColor(100, 100, 100, 50), 1))
+    def grid_to_scene(self, grid_pos):
+        """Convert grid coordinates to scene coordinates"""
+        return QPointF(grid_pos[0] * 16, grid_pos[1] * 16)
+    def scene_to_grid(self, scene_pos):
+        """Convert scene coordinates to grid coordinates"""
+        x = int(scene_pos.x() // 16) * 16
+        y = int(scene_pos.y() // 16) * 16
+        return (x, y)
     def _init_path(self):
         """Create enemy path with waypoints"""
-        self.path_points = [
-            QPointF(0, 300),
-            QPointF(400, 300),
-            QPointF(400, 100),
-            QPointF(800, 100)
-        ]
+        # self.path_points = [
+        #     QPointF(0, 300),
+        #     QPointF(400, 300),
+        #     QPointF(400, 100),
+        #     QPointF(800, 100)
+        # ]
         self._create_visual_path()
 
     def _setup_timers(self):
@@ -218,8 +175,8 @@ class GameScene(QGraphicsScene):
         self._update_projectiles()
         self._check_collisions()
         self._cleanup_items()
-        self._repaint_scene()
-        self.update_viewport(self.sceneRect())
+        #self._repaint_scene()
+        #self.update_viewport(self.sceneRect())
     def update_viewport(self,viewport_rect: QRectF):
         """Update scene viewport"""
         for item in self.items():
@@ -405,15 +362,15 @@ class GameScene(QGraphicsScene):
     def is_valid_position(self,check_item):
         """Check if shape intersects with other item shapes"""
         for item in self.items():
-            if item.isVisible() and item.collidesWithItem(check_item) and not isinstance(item, RangeIndicator) and not isinstance(item, GhostTowerItem) and not isinstance(item, ProjectileItem):
+            if item.isVisible() and item.collidesWithItem(check_item) and (isinstance(item, PathItem) or isinstance(item, ObstacleItem) or  isinstance(item, BaseTowerItem)):
                 print(f"Collision with {item}")
                 return False
         return True
 
     def _create_visual_path(self):
         """Generate visible path representation"""
-        for i,point in enumerate(self.path_points[1:]):
-            line = QPainterPath()
-            line.moveTo(self.path_points[i])
-            line.lineTo(point)
-            self.addPath(line, QPen(Qt.darkGreen, 20))
+        # for i,point in enumerate(self.path_points[1:]):
+        #     line = QPainterPath()
+        #     line.moveTo(self.path_points[i])
+        #     line.lineTo(point)
+        #     self.addPath(line, QPen(Qt.darkGreen, 20))

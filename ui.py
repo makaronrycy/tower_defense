@@ -48,7 +48,8 @@ class TowerStoreWidget(QWidget):
         # Tower Buttons
         self.tower_buttons = []
         for tower in TOWER_TYPES.values():
-            btn = QPushButton(self.create_button_content(tower))
+            btn = QPushButton(self.create_button_content(tower),)
+            btn.setTextFormat(Qt.RichText)
             btn.setProperty('cost', tower['cost'])
             btn.setEnabled(False)
             btn.clicked.connect(lambda _, t=tower: self.handle_tower_selection(t))
@@ -58,7 +59,9 @@ class TowerStoreWidget(QWidget):
         self.waveButton.clicked.connect(self.handle_wave_start)
         self.pauseButton = QPushButton("Pause")
         self.pauseButton.clicked.connect(self.handle_pause)
-        layout.addWidget(btn)
+        
+        layout.addWidget(self.waveButton)
+        layout.addWidget(self.pauseButton)
         self.setLayout(layout)
 
     def create_button_content(self, tower):
@@ -180,8 +183,6 @@ class GameView(QGraphicsView):
         """Configure view rendering and behavior"""
         self.setScene(self._scene)
         self.setRenderHints(
-            QPainter.Antialiasing |
-            QPainter.SmoothPixmapTransform |
             QPainter.TextAntialiasing
         )
         self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
@@ -189,7 +190,7 @@ class GameView(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
-        
+        self.scale(1.5,1.5)
         # Enable OpenGL acceleration if available
         try:
             from PySide6.QtOpenGLWidgets import QOpenGLWidget

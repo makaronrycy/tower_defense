@@ -1,49 +1,25 @@
-from graphicItems import Rat, GiantRat, FastRat
-
-
 tower_defense_waves = {
     1: {
-        "name": "Wave 1",
-        "enemies": [
-            {"type": Rat, "count": 5, "delay": 0},
-        ],
-        "delay": 0,
-        "duration": 20,
+        "rat" : 5
     },
     2: {
-        "name": "Wave 2",
-        "enemies": [
-            {"type": Rat, "count": 5, "delay": 0},
-            {"type": FastRat, "count": 3, "delay": 5},
-        ],
-        "delay": 0,
-        "duration": 20,
+        "rat" : 10,
+        "fast_rat" : 5
+
     },
     3: {
-        "name": "Wave 3",
-        "enemies": [
-            {"type": Rat, "count": 5, "delay": 0},
-            {"type": GiantRat, "count": 3, "delay": 5},
-            {"type": FastRat, "count": 2, "delay": 10},
-        ],
-        "duration": 20,
+        "rat" : 10,
+        "fast_rat" : 5,
+        "giant_rat" : 2
     },
     4: {
-        "name": "Wave 4",
-        "enemies": [
-            {"type": Rat, "count": 5, "delay": 0},
-            {"type": GiantRat, "count": 3, "delay": 5},
-            {"type": FastRat, "count": 2, "delay": 10},
-        ],
-        "duration": 20,
+        "rat" : 10,
+        "fast_rat" : 5,
+        "giant_rat" : 2
     },
     5: {
-        "name": "Wave 5",
-        "enemies": [
-            {"type": Rat, "count": 5, "delay": 0},
-            {"type": GiantRat, "count": 3, "delay": 5},
-            {"type": FastRat, "count": 2, "delay": 10},
-        ],
-        "duration": 20,
+        "rat" : 10,
+        "fast_rat" : 5,
+        "giant_rat" : 2
     },
 }
