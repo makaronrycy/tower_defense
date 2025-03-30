@@ -12,7 +12,7 @@ class Rat(BaseEnemyItem):
         self.setAcceptDrops(True)
         self._color = QColor(0, 255, 0, 255)
         self._radius = 20
-        self._speed = 0.5
+        self._speed = 4
         self._health = 40
         self._target = None
         self._selected = False

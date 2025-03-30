@@ -20,6 +20,7 @@ class BaseItem(QGraphicsObject):
         # Animation system
         if animation is None:
             animation = {
+                #dummy data
                 "spritesheet": SpriteSheet("path/to/spritesheet.png"),
                 "anim_data": {
                     "idle": {
@@ -27,7 +28,6 @@ class BaseItem(QGraphicsObject):
                         "to": 4,
                         0: {"rect": QRectF(0, 0, 32, 32), "duration": 0.1},
                         1: {"rect": QRectF(32, 0, 32, 32), "duration": 0.1},
-                        # Add more frames as needed
                     }
                 }
             }
@@ -104,6 +104,20 @@ class BaseItem(QGraphicsObject):
     #helper functions
     def distance_between_points(self,point1,point2):
         return math.sqrt((point1.x()-point2.x())**2 + (point1.y()-point2.y())**2)
+    def paint_sprite(self, painter: QPainter, pixmap: QPixmap) -> None:
+        """Helper method to draw a sprite centered on the item's position"""
+        # Calculate the top-left position to center the pixmap
+        #possible scaling, but would have to change other graphic elements and maybe tileset functionality
+        #painter.save()
+    
+        # Apply 2x scaling
+        #painter.scale(2.0, 2.0)
+        x = -pixmap.width() / 2
+        y = -pixmap.height() / 2
+
+        # Draw the pixmap centered
+        painter.drawPixmap(QRectF(x, y, pixmap.width(), pixmap.height()), pixmap, pixmap.rect())
+        #painter.restore()
 class MapItem(QGraphicsItem):
     def __init__(self, pixmap):
         super().__init__()
@@ -167,15 +181,16 @@ class BaseTowerItem(BaseItem):
             self.scene().tower_selected.emit(self if value else None)  # Emit signal when tower is selected
         return super().itemChange(change, value)
     def boundingRect(self) -> QRectF:
-        return self.animations.get_current_frame().rect()
+        pixmap = self.animations.get_current_frame()
+        width = pixmap.width()*2
+        height = pixmap.height()*2
+        # Center the rectangle around (0,0)
+        return QRectF(-width/2, -height/2, width, height)
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
         painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
         pic = self.animations.get_current_frame()
-        painter.drawPixmap(
-            pic.rect().topLeft(),
-            pic
-        )
+        self.paint_sprite(painter, pic)
     def can_upgrade(self,gold):
         return True if gold >= self.upgrade_cost else False
     @abstractmethod
@@ -224,15 +239,17 @@ class BaseEnemyItem(BaseItem):
         self._selected = False
         self.value = 20
     def boundingRect(self) -> QRectF:
-        return self.animations.get_current_frame().rect()
+        pixmap = self.animations.get_current_frame()
+        width = pixmap.width()
+        height = pixmap.height()
+        # Center the rectangle around (0,0)
+        return QRectF(-width/2, -height/2, width, height)
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
         painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
         pic = self.animations.get_current_frame()
-        painter.drawPixmap(
-            pic.rect(),
-            pic
-        )
+        self.paint_sprite(painter, pic)
+
     def update_direction(self, target_pos):
         """Flip sprite based on movement direction"""
         self.facing_right = target_pos.x() > self.x()
@@ -301,15 +318,18 @@ class ProjectileItem(BaseItem):
         self._lifetime = 1000
 
     def boundingRect(self) -> QRectF:
-        return self.animations.get_current_frame().rect()
+        pixmap = self.animations.get_current_frame()
+        width = pixmap.width()
+        height = pixmap.height()
+        # Center the rectangle around (0,0)
+        return QRectF(-width/2, -height/2, width, height)
+
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
         painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
         pic = self.animations.get_current_frame()
-        painter.drawPixmap(
-            pic.rect().topLeft(),
-            pic
-        )
+        self.paint_sprite(painter, pic)
+
     
     def update(self) -> None:
         self.update_position()

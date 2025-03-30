@@ -10,7 +10,7 @@ from enemies import Rat, FastRat, GiantRat
 from map_generator import MapGenerator,MapGraphicsManager
 from animationManager import AsepriteLoader,SpriteSheet, get_all_animations
 from tileset import get_tileset
-from waves import ENEMY_LIST 
+from waves import ENEMY_LIST, build_new_wave
 import random
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
@@ -27,7 +27,7 @@ class GameState(QObject):
         self._lives = 20
         self._level = 1
         self.wave = 1
-        self._wave_started = False
+        self.wave_started = False
         self.enemies_to_spawn = []
         
     @property
@@ -133,8 +133,11 @@ class GameScene(QGraphicsScene):
 
     def game_over(self):
         """Handle game over state"""
-        self.game_active = False
+
         self.game_timer.stop()
+        self.spawn_timer.stop()
+        self.game_active = False
+        self.game_over_signal.emit()
         # Show game over screen or reset game
         print("Game Over!")
         # Reset game state
@@ -149,9 +152,12 @@ class GameScene(QGraphicsScene):
         
     def start_wave(self):
         """Start a new wave of enemies"""
-        
+        enemies = {}
         self.game_state.wave_started = True
-        enemies = ENEMY_LIST[self.game_state.wave-1]
+        if self.game_state.wave > len(ENEMY_LIST):
+            enemies = build_new_wave(self.game_state.wave)
+        else:
+            enemies = ENEMY_LIST[self.game_state.wave-1]
         enemy_type = ["rat", "FAST_RAT", "GIANT_RAT"]
         for enemy_type in enemies:
             enemies_to_spawn = enemies[enemy_type]
@@ -217,8 +223,7 @@ class GameScene(QGraphicsScene):
                 self.game_state.gold += enemy.value
                 self.removeItem(enemy)
                 self.game_items['enemies'].remove(enemy)
-                if self.game_items['enemies'] == [] and self.game_state.enemies_to_spawn == []:
-                    self.end_wave()
+
                 continue
             if enemy.pos() == self.path_points[-1]:
                 self.game_state.lives -= 1
@@ -228,7 +233,10 @@ class GameScene(QGraphicsScene):
 
                     self.game_over()
                 continue
+
             enemy.advance_animation(16)
+        if self.game_items['enemies'] == [] and self.game_state.enemies_to_spawn == [] and self.game_state.wave_started:
+            self.end_wave()
 
     def _update_towers(self):
         """Handle tower targeting and shooting"""

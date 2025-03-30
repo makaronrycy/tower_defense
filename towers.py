@@ -19,7 +19,7 @@ class BombProjectile(ProjectileItem):
         self._radius = 10
         self._damage= 200
         self._lifetime = 1000
-        
+
 class ExplosionProjectile(ProjectileItem):
     def __init__(self,pos,target,parentTower,animation = None):
         super().__init__(pos=pos,target=target,parentTower=parentTower,animation=animation)

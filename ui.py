@@ -12,14 +12,12 @@ TOWER_TYPES = {
         "name": "Basic Tower",
         "type": "basic",
         "cost": 20,
-        "icon": "path/to/basic_tower_icon.png",
         "description": "Basic tower with moderate damage."
     },
     "bomb": {
         "name": "Bomb Tower",
         "type": "bomb",
         "cost": 200,
-        "icon": "path/to/sniper_tower_icon.png",
         "description": "Bomb tower with splash damage."
     },
 }
@@ -49,6 +47,9 @@ class TowerStoreWidget(QWidget):
         self.tower_buttons = []
         for tower in TOWER_TYPES.values():
             btn = QPushButton(self.create_button_content(tower),)
+            btn.toolTip = tower['description']
+            btn.setFixedSize(150, 50)
+            btn.setStyleSheet("background-color: lightblue;")
             btn.setProperty('cost', tower['cost'])
             btn.setEnabled(False)
             btn.clicked.connect(lambda _, t=tower: self.handle_tower_selection(t))
@@ -65,11 +66,8 @@ class TowerStoreWidget(QWidget):
 
     def create_button_content(self, tower):
         return f"""
-        <div style='text-align: center'>
-            <img src='{tower["icon"]}' width=64>
-            <br>{tower["name"]}
-            <br>Cost: {tower["cost"]}g
-        </div>
+            {tower["name"]}
+            Cost: {tower["cost"]}g
         """
     def handle_wave_start(self):
         """Emit signal when a wave starts"""
@@ -78,7 +76,7 @@ class TowerStoreWidget(QWidget):
         self.wave_started.emit()
     def handle_wave_end(self):
         self.waveButton.setEnabled(True)
-        self.waveButton.setText("Start Wave")
+        self.waveButton.setText(f"Start Wave {self.game_state.current_wave + 1}")
     def handle_pause(self):
         """Emit signal when the game is paused"""
         if self.pauseButton.text() == "Resume":
