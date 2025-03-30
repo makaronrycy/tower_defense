@@ -133,6 +133,10 @@
   "version": "1.2.9-x64",
   "format": "RGBA8888",
   "size": { "w": 512, "h": 32 },
-  "scale": "1"
+  "scale": "1",
+  "frameTags": [
+   { "name": "idle", "from": 0, "to": 3, "direction": "forward" },
+   { "name": "attack", "from": 4, "to": 15, "direction": "forward" }
+  ]
  }
 }
