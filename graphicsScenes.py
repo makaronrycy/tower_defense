@@ -10,6 +10,8 @@ from enemies import Rat, FastRat, GiantRat
 from map_generator import MapGenerator,MapGraphicsManager
 from animationManager import AsepriteLoader,SpriteSheet, get_all_animations
 from tileset import get_tileset
+from waves import ENEMY_LIST 
+import random
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
 '''
@@ -24,8 +26,9 @@ class GameState(QObject):
         self._score = 0
         self._lives = 20
         self._level = 1
-        self._wave = 1
+        self.wave = 1
         self._wave_started = False
+        self.enemies_to_spawn = []
         
     @property
     def gold(self):
@@ -67,6 +70,8 @@ class GameScene(QGraphicsScene):
     score_changed = Signal(int)
     lives_changed = Signal(int)
     repaint_view = Signal()
+    wave_ended = Signal()
+    game_over_signal = Signal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -80,12 +85,11 @@ class GameScene(QGraphicsScene):
             "enemies": [],
             "projectiles": []
         }
-        self.path_points = []
         self.current_range_indicator = None
         self.animations = get_all_animations()
         self.tileset = get_tileset()
         # Setup game systems
-        self._init_path()
+        self.path_points = []
         self._setup_timers()
         self._map_init()
         self._connect_signals()
@@ -95,16 +99,16 @@ class GameScene(QGraphicsScene):
     # ----------------------
     # Initialization Methods
     # ----------------------
-    def _map_init(self):
+    def _map_init(self,height=50,width=50):
         """Initialize grid and path system"""
-        self.map_generator = MapGenerator(30,30)
+        self.map_generator = MapGenerator(height,width)
         self.map_graphics_manager = MapGraphicsManager(self.map_generator.grid, 16, self.tileset)
         for item in self.map_graphics_manager.create_items():
             self.addItem(item)
         #self._init_grid()
         for p in self.map_generator.path:
             self.path_points.append(self.grid_to_scene(p))
-        self._init_path()
+
 
     def _init_grid(self):
         """Create visual/logical grid system"""
@@ -126,27 +130,40 @@ class GameScene(QGraphicsScene):
         x = int(scene_pos.x() // 16) * 16
         y = int(scene_pos.y() // 16) * 16
         return (x, y)
-    def _init_path(self):
-        """Create enemy path with waypoints"""
-        # self.path_points = [
-        #     QPointF(0, 300),
-        #     QPointF(400, 300),
-        #     QPointF(400, 100),
-        #     QPointF(800, 100)
-        # ]
-        self._create_visual_path()
 
+    def game_over(self):
+        """Handle game over state"""
+        self.game_active = False
+        self.game_timer.stop()
+        # Show game over screen or reset game
+        print("Game Over!")
+        # Reset game state
     def _setup_timers(self):
         """Initialize game timers"""
         self.game_timer = QTimer()
         self.game_timer.setInterval(16)  # ~60 FPS
         self.game_timer.timeout.connect(self.advance)
-        
         self.spawn_timer = QTimer()
-        self.spawn_timer.setInterval(2000)
+        self.spawn_timer.setInterval(1000)
         self.spawn_timer.timeout.connect(self.spawn_enemy)
-
         
+    def start_wave(self):
+        """Start a new wave of enemies"""
+        
+        self.game_state.wave_started = True
+        enemies = ENEMY_LIST[self.game_state.wave-1]
+        enemy_type = ["rat", "FAST_RAT", "GIANT_RAT"]
+        for enemy_type in enemies:
+            enemies_to_spawn = enemies[enemy_type]
+            for enemy in range(enemies_to_spawn):
+                self.game_state.enemies_to_spawn.append(enemy_type)
+        random.shuffle(self.game_state.enemies_to_spawn)
+        self.spawn_timer.start()
+    def end_wave(self):
+        """End the current wave of enemies"""
+        self.game_state.wave_started = False
+        self.game_state.wave += 1
+        self.wave_ended.emit()
 
     def _repaint_scene(self):
         """Repaint the scene to update visuals"""
@@ -163,7 +180,6 @@ class GameScene(QGraphicsScene):
         """Begin game progression"""
         self.game_active = True
         self.game_timer.start()
-        self.spawn_timer.start()
 
     def advance(self):
         """Main game update cycle"""
@@ -201,11 +217,16 @@ class GameScene(QGraphicsScene):
                 self.game_state.gold += enemy.value
                 self.removeItem(enemy)
                 self.game_items['enemies'].remove(enemy)
+                if self.game_items['enemies'] == [] and self.game_state.enemies_to_spawn == []:
+                    self.end_wave()
                 continue
             if enemy.pos() == self.path_points[-1]:
                 self.game_state.lives -= 1
                 self.removeItem(enemy)
                 self.game_items['enemies'].remove(enemy)
+                if self.game_state.lives <= 0:
+
+                    self.game_over()
                 continue
             enemy.advance_animation(16)
 
@@ -255,7 +276,7 @@ class GameScene(QGraphicsScene):
         for projectile in self.game_items['projectiles']:
             colliding = self.collidingItems(projectile)
             for item in colliding:
-                if isinstance(item, Rat):
+                if isinstance(item, Rat) or isinstance(item, FastRat) or isinstance(item, GiantRat):
                     print(f"{projectile.__class__.__name__} hit {item.__class__.__name__}: {item._health} health left")
                     self._handle_projectile_hit(projectile, item)
 
@@ -283,9 +304,17 @@ class GameScene(QGraphicsScene):
 
     def spawn_enemy(self):
         """Create and register new enemy"""
-        enemy = Rat(path=self.path_points, animation=self.animations["rat"])
-        #enemy = FastRat(path=self.path_points, animation=self.animations["fast_rat"])
-        #enemy = GiantRat(path=self.path_points, animation=self.animations["giant_rat"])
+        enemy = None
+        if not self.game_state.enemies_to_spawn:
+            self.spawn_timer.stop()
+        if self.game_state.enemies_to_spawn[0] == "rat":
+            enemy = Rat(path=self.path_points, animation=self.animations["rat"])
+        if self.game_state.enemies_to_spawn[0] == "fast_rat":
+            enemy = FastRat(path=self.path_points, animation=self.animations["fast_rat"])
+        if self.game_state.enemies_to_spawn[0] == "giant_rat":
+            enemy = GiantRat(path=self.path_points, animation=self.animations["giant_rat"])
+        if enemy:
+            self.game_state.enemies_to_spawn.pop(0)
         self.game_items['enemies'].append(enemy)
         self.addItem(enemy)
         enemy.setPos(self.path_points[0])
@@ -366,11 +395,3 @@ class GameScene(QGraphicsScene):
                 print(f"Collision with {item}")
                 return False
         return True
-
-    def _create_visual_path(self):
-        """Generate visible path representation"""
-        # for i,point in enumerate(self.path_points[1:]):
-        #     line = QPainterPath()
-        #     line.moveTo(self.path_points[i])
-        #     line.lineTo(point)
-        #     self.addPath(line, QPen(Qt.darkGreen, 20))

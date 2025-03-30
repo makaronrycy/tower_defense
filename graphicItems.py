@@ -101,6 +101,9 @@ class BaseItem(QGraphicsObject):
     def rotation_angle(self, angle: float) -> None:
         self.setRotation(angle)
 
+    #helper functions
+    def distance_between_points(self,point1,point2):
+        return math.sqrt((point1.x()-point2.x())**2 + (point1.y()-point2.y())**2)
 class MapItem(QGraphicsItem):
     def __init__(self, pixmap):
         super().__init__()
@@ -199,8 +202,7 @@ class BaseTowerItem(BaseItem):
         
     def hoverEnterEvent(self, event):
         return super().hoverEnterEvent(event)
-    def distance_between_points(self,point1,point2):
-        return math.sqrt((point1.x()-point2.x())**2 + (point1.y()-point2.y())**2)
+    
 class BaseEnemyItem(BaseItem):
     def __init__(self,path,animation = None):
         super().__init__(animation=animation)
@@ -237,17 +239,43 @@ class BaseEnemyItem(BaseItem):
     def update(self) -> None:
         self.follow_path()
 
+
     def follow_path(self):
-        if(self.pos() == self._current_waypoint):
-            self._current_waypoint = self._path[self._path.index(self._current_waypoint)+1]
-        if(self.pos().x() < self._current_waypoint.x()):
-            self.setPos(self.pos() + QPointF(self._speed, 0))
-        elif(self.pos().x() > self._current_waypoint.x()):
-            self.setPos(self.pos() - QPointF(self._speed, 0))
-        elif(self.pos().y() < self._current_waypoint.y()):  
-            self.setPos(self.pos() + QPointF(0, self._speed))
-        elif(self.pos().y() > self._current_waypoint.y()):
-            self.setPos(self.pos() - QPointF(0, self._speed))
+        # Define a minimum waypoint proximity threshold
+        waypoint_threshold = max(5.0, self._speed)  # At least 5 pixels or the speed value
+        
+        # Check if we've reached the current waypoint or passed it
+        distance_to_waypoint = self.distance_between_points(self.pos(), self._current_waypoint)
+        
+        if distance_to_waypoint < waypoint_threshold:
+            # Get next waypoint if available
+            current_index = self._path.index(self._current_waypoint)
+            if current_index < len(self._path) - 1:
+                # Move to next waypoint
+                self._current_waypoint = self._path[current_index + 1]
+                self.update_direction(self._current_waypoint)
+        
+        # Calculate direction vector to current waypoint
+        direction = QPointF(
+            self._current_waypoint.x() - self.pos().x(),
+            self._current_waypoint.y() - self.pos().y()
+        )
+        
+        # Normalize the direction vector
+        length = math.sqrt(direction.x()**2 + direction.y()**2)
+        if length > 0:
+            normalized_dir = QPointF(direction.x() / length, direction.y() / length)
+            
+            # Scale by speed but prevent overshooting
+            move_distance = min(self._speed, distance_to_waypoint)
+            move_vector = QPointF(normalized_dir.x() * move_distance, normalized_dir.y() * move_distance)
+            
+            # Move along that direction
+            self.setPos(self.pos() + move_vector)
+        
+        # Check for stuck condition (optional)
+        # If an enemy hasn't made significant progress toward waypoint after several updates
+        # we could add some recovery logic here
 
 class ProjectileItem(BaseItem):
     def __init__(self,pos,target,parentTower,animation = None):

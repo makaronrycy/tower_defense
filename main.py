@@ -46,7 +46,10 @@ class MainWindow(QMainWindow):
         self.tower_overview.upgrade_tower.connect(self.scene.handle_tower_upgrade)
         self.tower_overview.tower_deselected.connect(self.scene.handle_tower_deselection)
         self.scene.tower_selected.connect(self.scene.handle_tower_selection)
-        
+
+        self.store.wave_started.connect(self.scene.start_wave)
+        self.scene.game_over_signal.connect(self.store.handle_game_over)
+        self.scene.wave_ended.connect(self.store.handle_wave_end)
         QTimer.singleShot(1000, self.scene.start_game)
 
 if __name__ == "__main__":

@@ -49,7 +49,6 @@ class TowerStoreWidget(QWidget):
         self.tower_buttons = []
         for tower in TOWER_TYPES.values():
             btn = QPushButton(self.create_button_content(tower),)
-            btn.setTextFormat(Qt.RichText)
             btn.setProperty('cost', tower['cost'])
             btn.setEnabled(False)
             btn.clicked.connect(lambda _, t=tower: self.handle_tower_selection(t))
@@ -74,7 +73,12 @@ class TowerStoreWidget(QWidget):
         """
     def handle_wave_start(self):
         """Emit signal when a wave starts"""
+        self.waveButton.setEnabled(False)
+        self.waveButton.setText("Wave Started")
         self.wave_started.emit()
+    def handle_wave_end(self):
+        self.waveButton.setEnabled(True)
+        self.waveButton.setText("Start Wave")
     def handle_pause(self):
         """Emit signal when the game is paused"""
         if self.pauseButton.text() == "Resume":
@@ -85,7 +89,13 @@ class TowerStoreWidget(QWidget):
     def handle_tower_selection(self, tower):
         """Emit signal when a tower is selected"""
         self.tower_selected.emit(tower)
-        
+    def handle_game_over(self):
+        """Handle game over state"""
+        self.waveButton.setEnabled(False)
+        self.pauseButton.setEnabled(False)
+        for btn in self.tower_buttons:
+            btn.setEnabled(False)
+        self.waveButton.setText("Game Over")
     def update_store_ui(self, gold):
         """Update the store UI based on game state"""
         self.gold_label.setText(f"Gold: {gold}")
@@ -185,11 +195,11 @@ class GameView(QGraphicsView):
         self.setRenderHints(
             QPainter.TextAntialiasing
         )
-        self.setViewportUpdateMode(QGraphicsView.FullViewportUpdate)
+
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-        self.setResizeAnchor(QGraphicsView.AnchorViewCenter)
+
         self.scale(1.5,1.5)
         # Enable OpenGL acceleration if available
         try:
