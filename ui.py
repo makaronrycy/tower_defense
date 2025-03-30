@@ -3,6 +3,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt, QRectF, QPoint, Signal,Slot
 from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QColor
+from PySide6.QtCore import QTimer, QPointF
 from graphicsScenes import GameState
 from graphicItems import BaseTowerItem
 
@@ -108,13 +109,14 @@ class TowerOverviewWidget(QWidget):
 
         self.name_label = QLabel("Tower Name")
         self.kills_label = QLabel("Kills: 0")
-
+        self.frame_label = QLabel(f"Frame: {self.tower.current_frame}")
         self.sell_btn = QPushButton(f"Sell:{self.tower.cost}")
         self.sell_btn.clicked.connect(self.handle_sell_tower)
         self.upgrade_btn = QPushButton(f"Upgrade:{self.tower.upgrade_cost} ")
         self.upgrade_btn.clicked.connect(self.handle_upgrade_tower)
         self.upgrade_btn.setEnabled(self.game_state.gold >= self.tower.upgrade_cost)
         
+        layout.addWidget(self.frame_label)
         layout.addWidget(self.name_label)
         layout.addWidget(self.kills_label)
         layout.addWidget(self.sell_btn)
@@ -127,7 +129,9 @@ class TowerOverviewWidget(QWidget):
             self.clear()
             return
         self.tower = tower
-        self.name_label.setText(f"Name: {tower.name}")  
+        
+        self.name_label.setText(f"Name: {tower.name}")
+        self.frame_label.setText(f"Frame: {tower.animations.current_frame}")
         self.sell_btn.setText(f"Sell: {tower.cost // 2}")
         self.upgrade_btn.setText(f"Upgrade: {tower.upgrade_cost}")
         self.kills_label.setText(f"Kills: {tower.kills}")
@@ -168,6 +172,10 @@ class GameView(QGraphicsView):
         # Initialize view settings
         self._setup_view()
 
+
+    def repaint_view(self):
+        """Repaint the view to reflect changes in the scene"""
+        self.repaint()
     def _setup_view(self):
         """Configure view rendering and behavior"""
         self.setScene(self._scene)

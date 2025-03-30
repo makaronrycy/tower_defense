@@ -37,7 +37,7 @@ class MainWindow(QMainWindow):
         self.scene.game_state.lives_changed.connect(self.store.update_lives_ui)
         self.scene.tower_selected.connect(self.tower_overview.update_overview_ui)
 
-               
+        self.scene.repaint_view.connect(self.view.repaint_view)
 
         self.store.tower_selected.connect(self.scene.start_tower_placement)
         self.tower_overview.tower.kills_changed.connect(self.tower_overview.update_overview_ui)

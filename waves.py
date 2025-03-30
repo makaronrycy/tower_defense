@@ -1,4 +1,6 @@
 from graphicItems import Rat, GiantRat, FastRat
+
+
 tower_defense_waves = {
     1: {
         "name": "Wave 1",

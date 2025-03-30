@@ -1,11 +1,12 @@
 from PySide6.QtCore import Qt, QRectF, QPointF, Property, QObject, Signal, QPropertyAnimation
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsObject
-from PySide6.QtGui import QPainter, QPainterPath, QColor, QBrush
-
+from animationManager import SpriteSheet, AnimationComponent
+from PySide6.QtGui import QPainter, QPainterPath, QColor, QBrush,QPixmap
+from animationManager import AnimationComponent
 from abc import ABC, abstractmethod
 import math
 class BaseItem(QGraphicsObject):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None, animation = None):
         super().__init__(parent)
         self._health = 100
         self._z_value = 0
@@ -14,10 +15,28 @@ class BaseItem(QGraphicsObject):
         # Setup common flags
         self.setFlag(QGraphicsItem.ItemIsFocusable, True)
         self.setFlag(QGraphicsItem.ItemSendsGeometryChanges, True)
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
+        self.setCacheMode(QGraphicsItem.NoCache)  # Sometimes better for animated items
         
         # Animation system
-        self._animations = {}
+        if animation is None:
+            animation = {
+                "spritesheet": SpriteSheet("path/to/spritesheet.png"),
+                "anim_data": {
+                    "idle": {
+                        "from": 0,
+                        "to": 4,
+                        0: {"rect": QRectF(0, 0, 32, 32), "duration": 0.1},
+                        1: {"rect": QRectF(32, 0, 32, 32), "duration": 0.1},
+                        # Add more frames as needed
+                    }
+                }
+            }
+        else:
+            self.animations = AnimationComponent(animation["spritesheet"],animation["anim_data"])
+        self.current_frame = QPixmap()
+        self.facing_right = True
+
+
         if self.__class__ is BaseItem:
             raise TypeError("Cannot instantiate abstract BaseItem")
     @abstractmethod
@@ -29,7 +48,7 @@ class BaseItem(QGraphicsObject):
     def paint(self, painter: QPainter, option, widget=None) -> None:
         """Must implement in subclasses"""
         pass
-
+    
     @abstractmethod
     def update(self) -> None:
         """Custom update mechanism for game logic"""
@@ -38,6 +57,7 @@ class BaseItem(QGraphicsObject):
     # =====================
     # Common functionality
     # =====================
+    
     def shape(self) -> QPainterPath:
         """Default collision shape (circle)"""
         path = QPainterPath()
@@ -55,32 +75,11 @@ class BaseItem(QGraphicsObject):
         self._z_value = value
         self.setZValue(value)
 
-    def advance(self, phase: int) -> None:
-        """Game loop updates"""
-        if phase == 1:  # Only process during second phase
-            self.update()
-
-    # =====================
-    # Animation system
-    # =====================
-    def add_animation(self, name: str, target: QObject, property_name: bytes):
-        """Register animation properties"""
-        anim = QPropertyAnimation(target, property_name, self)
-        self._animations[name] = anim
-        anim.valueChanged.connect(self._on_animation_update)
-
-    def _on_animation_update(self):
-        """Trigger repaint on animation updates"""
-        self.update()
-
-    def start_animation(self, name: str, duration: int, start, end):
-        """Start registered animation"""
-        if name in self._animations:
-            anim = self._animations[name]
-            anim.setDuration(duration)
-            anim.setStartValue(start)
-            anim.setEndValue(end)
-            anim.start()
+    def advance_animation(self, interval) -> None:
+        """Update animation based on delta time"""
+        # Convert milliseconds to seconds for the animation component
+        self.animations.update(interval / 1000.0)
+        self.update()  # Request a repaint
 
     # =====================
     # Property definitions
@@ -106,12 +105,11 @@ class BaseItem(QGraphicsObject):
 
 class BaseTowerItem(BaseItem):
     kills_changed = Signal(int) # Emit when kills change
-    def __init__(self,pos):
-        super().__init__()
+    def __init__(self,pos,animation = None):
+        super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
         self.setFlag(QGraphicsItem.ItemIsSelectable, True)
-        self.setFlag(QGraphicsItem.ItemSendsScenePositionChanges, True)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
         self.setAcceptHoverEvents(True)
         self.setAcceptDrops(True)
@@ -126,18 +124,21 @@ class BaseTowerItem(BaseItem):
         self._cooldown = 0
         self.kills = 0
         self.upgrade_cost = 20
+        
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSelectedChange:
             self.scene().tower_selected.emit(self if value else None)  # Emit signal when tower is selected
         return super().itemChange(change, value)
     def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
+        return self.animations.get_current_frame().rect()
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(QBrush(self._color))
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Tower")
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
+        pic = self.animations.get_current_frame()
+        painter.drawPixmap(
+            pic.rect().topLeft(),
+            pic
+        )
     def can_upgrade(self,gold):
         return True if gold >= self.upgrade_cost else False
     @abstractmethod
@@ -145,6 +146,7 @@ class BaseTowerItem(BaseItem):
         """Must implement in subclasses"""
         pass
     def update(self) -> None:
+
         if self._cooldown > 0:
             self._cooldown -= 1
 
@@ -165,94 +167,9 @@ class BaseTowerItem(BaseItem):
         return super().hoverEnterEvent(event)
     def distance_between_points(self,point1,point2):
         return math.sqrt((point1.x()-point2.x())**2 + (point1.y()-point2.y())**2)
-class BasicTower(BaseTowerItem):
-    def __init__(self,pos):
-        super().__init__(pos=pos)
-        self.set_z_value(1)
-        self.setPos(pos)
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self.name = "Basic Tower"
-        self.cost = 30
-        self._damage = 10
-        self.range = 100
-        self._fire_rate = 100
-        self._cooldown = 0
-        self.upgrade_cost = 20
-    
-    def upgrade(self):
-        self._damage += 5
-        self.range += 20
-        self._fire_rate -= 10
-        self.cost += 20
-        print(f"Upgraded {self.name}: Damage: {self._damage}, Range: {self.range}, Fire Rate: {self._fire_rate}")
-    def create_projectile(self,enemyPos):
-        self._cooldown = self._fire_rate
-        p = ProjectileItem(self.pos(),enemyPos,self)
-        return p
-class BombTower(BaseTowerItem):
-    def __init__(self,pos):
-        super().__init__(pos=pos)
-        self.set_z_value(1)
-        self.setPos(pos)
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self.name = "Bomb Tower"
-        self.cost = 50
-        self._damage = 20
-        self.range = 150
-        self._fire_rate = 200
-        self._cooldown = 0
-        self.upgrade_cost = 30
-    def create_projectile(self,enemyPos):
-        self._cooldown = self._fire_rate
-        p = BombProjectile(self.pos(),enemyPos,self)
-        return p
-class BoosterTower(BaseTowerItem):
-    def __init__(self,pos):
-        super().__init__(pos=pos)
-        self.set_z_value(1)
-        self.setPos(pos)
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self.name = "Booster Tower"
-        self.cost = 50
-        self._damage = 0
-        self.range = 150
-        self._fire_rate = 200
-        self._cooldown = 0
-        self.upgrade_cost = 30
-        self.boosted_towers = []
-    def upgrade(self):
-        self.range += 20
-
-        
-    def create_projectile(self,enemyPos):
-        pass
-    def boost_tower(self,tower):
-        if tower not in self.boosted_towers:
-            tower._damage += 5
-            tower.range += 20
-            tower._fire_rate -= 10
-            self.boosted_towers.append(tower)
-            print(f"Boosted {tower.name}: Damage: {tower._damage}, Range: {tower.range}, Fire Rate: {tower._fire_rate}")
-    def unboost_tower(self,tower):
-        if tower in self.boosted_towers:
-            tower._damage -= 5
-            tower.range -= 20
-            tower._fire_rate += 10
-            self.boosted_towers.remove(tower)
-            print(f"Unboosted {tower.name}: Damage: {tower._damage}, Range: {tower.range}, Fire Rate: {tower._fire_rate}")
-    
 class BaseEnemyItem(BaseItem):
-    def __init__(self,path):
-        super().__init__()
+    def __init__(self,path,animation = None):
+        super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -264,23 +181,25 @@ class BaseEnemyItem(BaseItem):
         self._speed = 10
         self._health = 100
         self._path = path
-
         
         #path[0] to punkt startowy
         self._current_waypoint = path[1]
         self._target = None
         self._selected = False
         self.value = 20
-
     def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
+        return self.animations.get_current_frame().rect()
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(QBrush(self._color))
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Enemy")
-    
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
+        pic = self.animations.get_current_frame()
+        painter.drawPixmap(
+            pic.rect(),
+            pic
+        )
+    def update_direction(self, target_pos):
+        """Flip sprite based on movement direction"""
+        self.facing_right = target_pos.x() > self.x()
     def update(self) -> None:
         self.follow_path()
 
@@ -297,8 +216,8 @@ class BaseEnemyItem(BaseItem):
             self.setPos(self.pos() - QPointF(0, self._speed))
 
 class ProjectileItem(BaseItem):
-    def __init__(self,pos,target,parentTower):
-        super().__init__()
+    def __init__(self,pos,target,parentTower,animation = None):
+        super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -320,12 +239,15 @@ class ProjectileItem(BaseItem):
         self._lifetime = 1000
 
     def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
+        return self.animations.get_current_frame().rect()
     
     def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Bullet")
+        painter.setRenderHint(QPainter.SmoothPixmapTransform, False)
+        pic = self.animations.get_current_frame().scaled(self._radius*2,self._radius*2,Qt.KeepAspectRatio,Qt.SmoothTransformation)
+        painter.drawPixmap(
+            pic.rect().topLeft(),
+            pic
+        )
     
     def update(self) -> None:
         self.update_position()
@@ -338,44 +260,13 @@ class ProjectileItem(BaseItem):
         if self._lifetime <= 0 or self._pierce < 0:
             return True
         return False
-class BombProjectile(ProjectileItem):
-    def __init__(self,pos,target,parentTower):
-        super().__init__(pos=pos,target=target,parentTower=parentTower)
-        self._color = QColor(255, 0, 0, 255)
-        self._radius = 10
-        self._damage= 200
-        self._lifetime = 1000
-    def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-    
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(255, 0,0 , 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Bomb")
-class ExplosionProjectile(ProjectileItem):
-    def __init__(self,pos,target,parentTower):
-        super().__init__(pos=pos,target=target,parentTower=parentTower)
-
-        self._speed = 0
-        self._damage = 20
-        self._pierce = 999
-        self._color = QColor(255, 255, 0, 255)
-        self._radius = 50
-        self._lifetime = 100  # Duration of the explosion effect
-    def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-    
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(255, 0,0 , 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Explosion")
 class GhostTowerItem(QGraphicsItem):
     def __init__(self, tower_type):
         super().__init__()
         self.name = tower_type["type"]
         self.cost = tower_type["cost"]
         self.valid = False
-        self._radius = 30
+        self._radius = 20
         self.setOpacity(0.5)
         self.setZValue(100)  # Above other items
 
@@ -392,86 +283,7 @@ class GhostTowerItem(QGraphicsItem):
         painter.drawEllipse(self.boundingRect())
     def boundingRect(self) -> QRectF:
         return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-class Rat(BaseEnemyItem):
-    def __init__(self,path):
-        super().__init__(path=path)
-        self.set_z_value(1)
-        self.setPos(QPointF(0, 300))
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self._color = QColor(0, 255, 0, 255)
-        self._radius = 20
-        self._speed = 1
-        self._health = 100
-        self._target = None
-        self._selected = False
-        self.value = 20
 
-    def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-    
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(QBrush(self._color))
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "Rat")
-    
-    def update(self) -> None:
-        self.follow_path()
-class FastRat(BaseEnemyItem):
-    def __init__(self,path):
-        super().__init__(path=path)
-        self.set_z_value(1)
-        self.setPos(QPointF(0, 300))
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self._color = QColor(0, 255, 255, 255)
-        self._radius = 20
-        self._speed = 2
-        self._health = 50
-        self.value = 40
-
-    def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-    
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(QBrush(self._color))
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "FastRat")
-    
-    def update(self) -> None:
-        self.follow_path()
-class GiantRat(BaseEnemyItem):
-    def __init__(self,path):
-        super().__init__(path=path)
-        self.set_z_value(1)
-        self.setPos(QPointF(0, 300))
-        self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
-        self.setAcceptHoverEvents(True)
-        self.setAcceptDrops(True)
-        
-        self._color = QColor(255, 0, 0, 255)
-        self._radius = 30
-        self._speed = 1
-        self._health = 200
-        self.value = 100
-
-    def boundingRect(self) -> QRectF:
-        return QRectF(-self._radius, -self._radius, self._radius * 2, self._radius * 2)
-    
-    def paint(self, painter: QPainter, option, widget=None) -> None:
-        painter.setBrush(QBrush(self._color))
-        painter.drawEllipse(self.boundingRect())
-        painter.setPen(QColor(0, 0, 0, 255))
-        painter.drawText(self.boundingRect(), Qt.AlignCenter, "GiantRat")
-    
-    def update(self) -> None:
-        self.follow_path()
 class RangeIndicator(QGraphicsItem):
     def __init__(self, tower: BaseTowerItem):
         super().__init__()
