@@ -43,20 +43,11 @@
  "meta": {
   "app": "http://www.aseprite.org/",
   "version": "1.2.9-x64",
-  "image": "C:\\Users\\maury\\Documents\\sprite\\garfield_tower.png",
   "format": "RGBA8888",
   "size": { "w": 160, "h": 32 },
   "scale": "1",
   "frameTags": [
-  ],
-  "layers": [
-   { "name": "tail", "opacity": 255, "blendMode": "normal" },
-   { "name": "torso", "opacity": 255, "blendMode": "normal" },
-   { "name": "legs", "opacity": 255, "blendMode": "normal" },
-   { "name": "head", "opacity": 255, "blendMode": "normal" },
-   { "name": "hands", "opacity": 255, "blendMode": "normal" }
-  ],
-  "slices": [
+   { "name": "idle", "from": 0, "to": 4, "direction": "forward" }
   ]
  }
 }

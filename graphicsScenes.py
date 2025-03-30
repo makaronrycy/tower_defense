@@ -12,6 +12,7 @@ from animationManager import AsepriteLoader,SpriteSheet, get_all_animations
 from tileset import get_tileset
 from waves import ENEMY_LIST, build_new_wave
 import random
+import config as cfg
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
 '''
@@ -22,9 +23,9 @@ class GameState(QObject):
     level_changed = Signal(int)
     def __init__(self):
         super().__init__()
-        self._gold = 1000
+        self._gold = cfg.BASE_GOLD
         self._score = 0
-        self._lives = 20
+        self._lives = cfg.BASE_LIVES
         self._level = 1
         self.wave = 1
         self.wave_started = False
@@ -99,7 +100,7 @@ class GameScene(QGraphicsScene):
     # ----------------------
     # Initialization Methods
     # ----------------------
-    def _map_init(self,height=50,width=50):
+    def _map_init(self,height=cfg.MAP_HEIGHT,width=cfg.MAP_WIDTH):
         """Initialize grid and path system"""
         self.map_generator = MapGenerator(height,width)
         self.map_graphics_manager = MapGraphicsManager(self.map_generator.grid, 16, self.tileset)
@@ -300,11 +301,18 @@ class GameScene(QGraphicsScene):
         elif(tower.name == "bomb"):
             new_tower = BombTower(pos,self.animations["bomb_tower"])
         elif(tower.name == "booster"):
-            new_tower = BoosterTower(pos)
+            new_tower = BoosterTower(pos,self.animations["booster_tower"])
+            #boost towers around it
+            self.boost_around_tower(new_tower)
         self.game_items['towers'].append(new_tower)
         self.addItem(new_tower)
         
-
+    def boost_around_tower(self,tower):
+        """Boost towers around the tower"""
+        for item in self.items():
+            if isinstance(item, BaseTowerItem) and item != tower:
+                if tower.collidesWithItem(item):
+                    tower.boost_tower(item)
     def add_projectile(self, projectile):
         """Register new projectile"""
         self.game_items['projectiles'].append(projectile)

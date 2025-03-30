@@ -175,6 +175,7 @@ class BaseTowerItem(BaseItem):
         self._cooldown = 0
         self.kills = 0
         self.upgrade_cost = 20
+        self._boost_modifier = 1.0
         
     def itemChange(self, change, value):
         if change == QGraphicsItem.ItemSelectedChange:
@@ -182,8 +183,8 @@ class BaseTowerItem(BaseItem):
         return super().itemChange(change, value)
     def boundingRect(self) -> QRectF:
         pixmap = self.animations.get_current_frame()
-        width = pixmap.width()*2
-        height = pixmap.height()*2
+        width = pixmap.width()
+        height = pixmap.height()
         # Center the rectangle around (0,0)
         return QRectF(-width/2, -height/2, width, height)
     
@@ -209,6 +210,7 @@ class BaseTowerItem(BaseItem):
                 return enemy
     def should_fire(self):
         return True if self._target and self._cooldown == 0 else False
+    
 
     def add_kill(self):
         self.kills += 1
@@ -217,7 +219,15 @@ class BaseTowerItem(BaseItem):
         
     def hoverEnterEvent(self, event):
         return super().hoverEnterEvent(event)
-    
+    @Property(float)
+    def boost_modifier(self) -> int:
+        return self._boost_modifier
+    @boost_modifier.setter
+    def boost_modifier(self, value: int) -> None:
+        self._boost_modifier = value
+        self._damage = self._damage * value
+        self._upgrade_cost = self._upgrade_cost / (value/1.5)
+        self._fire_rate = self._fire_rate / value
 class BaseEnemyItem(BaseItem):
     def __init__(self,path,animation = None):
         super().__init__(animation=animation)
@@ -348,7 +358,7 @@ class GhostTowerItem(QGraphicsItem):
         self.name = tower_type["type"]
         self.cost = tower_type["cost"]
         self.valid = False
-        self._radius = 20
+        self._radius = 8
         self.setOpacity(0.5)
         self.setZValue(100)  # Above other items
 

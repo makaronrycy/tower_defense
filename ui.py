@@ -20,6 +20,12 @@ TOWER_TYPES = {
         "cost": 200,
         "description": "Bomb tower with splash damage."
     },
+    "booster": {
+        "name": "Booster Tower",
+        "type": "booster",
+        "cost": 100,
+        "description": "Booster tower that increases stats and reduces upgrade cost."
+    },
 }
 
 

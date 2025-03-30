@@ -92,25 +92,21 @@ class BoosterTower(BaseTowerItem):
         self._fire_rate = 200
         self._cooldown = 0
         self.upgrade_cost = 30
+        self.boost_value = 1.5
         self.boosted_towers = []
     def upgrade(self):
         self.range += 20
-
         
     def create_projectile(self,enemyPos):
         pass
-    def boost_tower(self,tower):
+    def boost_tower(self,tower:BaseTowerItem):
         if tower not in self.boosted_towers:
-            tower._damage += 5
-            tower.range += 20
-            tower._fire_rate -= 10
+            tower.boost_modifier = self.boost_value
             self.boosted_towers.append(tower)
             print(f"Boosted {tower.name}: Damage: {tower._damage}, Range: {tower.range}, Fire Rate: {tower._fire_rate}")
     def unboost_tower(self,tower):
         if tower in self.boosted_towers:
-            tower._damage -= 5
-            tower.range -= 20
-            tower._fire_rate += 10
+            tower.boost_modifier = 1.0
             self.boosted_towers.remove(tower)
             print(f"Unboosted {tower.name}: Damage: {tower._damage}, Range: {tower.range}, Fire Rate: {tower._fire_rate}")
     
