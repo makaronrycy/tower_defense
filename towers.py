@@ -32,8 +32,8 @@ class ExplosionProjectile(ProjectileItem):
         self._lifetime = 100  # Duration of the explosion effect
 
 class BasicTower(BaseTowerItem):
-    def __init__(self,pos,animation = None):
-        super().__init__(pos=pos,animation=animation)
+    def __init__(self,pos,animation = None,tower_id = None):
+        super().__init__(tower_id=tower_id,pos=pos,animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -58,8 +58,8 @@ class BasicTower(BaseTowerItem):
         self._cooldown = self._fire_rate
 
 class BombTower(BaseTowerItem):
-    def __init__(self,pos,animation = None):
-        super().__init__(pos=pos,animation=animation,max_upgrade_level=2)
+    def __init__(self,pos,animation = None,tower_id = None):
+        super().__init__(tower_id = tower_id,pos=pos,animation=animation,max_upgrade_level=2)
         self.set_z_value(1)
         self.setPos(pos)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -82,8 +82,8 @@ class BombTower(BaseTowerItem):
     def set_cooldown(self):
         self._cooldown = self._fire_rate
 class BoosterTower(BaseTowerItem):
-    def __init__(self,pos,animation = None):
-        super().__init__(pos=pos,animation=animation)
+    def __init__(self,pos,animation = None,tower_id = None):
+        super().__init__(tower_id=tower_id,pos=pos,animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -109,6 +109,8 @@ class BoosterTower(BaseTowerItem):
     def create_projectile(self,enemyPos):
         pass
     def set_cooldown(self):
+        pass
+    def should_fire(self):
         pass
     def boost_tower(self,tower:BaseTowerItem):
         if tower not in self.boosted_towers:

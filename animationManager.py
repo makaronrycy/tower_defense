@@ -58,7 +58,7 @@ class AnimationComponent:
             self.current_frame = 0
             self.current_time = 0.0
         else:
-            raise ValueError(f"Animation '{name}' not found.")
+            raise ValueError(f"Animation '{name}' not found by {self.spritesheet}.")
     def get_current_frame(self):
         if self.current_frame in self.current_anim:
             frame_data = self.current_anim[self.current_frame]

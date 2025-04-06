@@ -3,8 +3,8 @@ from PySide6.QtGui import QPainter, QColor, QBrush, QPen
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsEllipseItem, QGraphicsPathItem, QGraphicsScene, QGraphicsView
 from graphicItems import BaseEnemyItem
 class Rat(BaseEnemyItem):
-    def __init__(self,path,animation = None):
-        super().__init__(path=path,animation=animation)
+    def __init__(self,path,enemy_id = None,animation = None):
+        super().__init__(path=path,enemy_id=enemy_id,animation=animation)
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -19,8 +19,8 @@ class Rat(BaseEnemyItem):
         self.value = 20
 
 class FastRat(BaseEnemyItem):
-    def __init__(self,path,animation = None):
-        super().__init__(path=path,animation=animation)
+    def __init__(self,path,enemy_id = None,animation = None):
+        super().__init__(path=path,enemy_id=enemy_id,animation=animation)
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)
@@ -35,8 +35,8 @@ class FastRat(BaseEnemyItem):
 
 
 class GiantRat(BaseEnemyItem):
-    def __init__(self,path,animation = None):
-        super().__init__(path=path,animation=animation)
+    def __init__(self,path,enemy_id = None,animation = None):
+        super().__init__(path=path,enemy_id=enemy_id,animation=animation)
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
         self.setCacheMode(QGraphicsItem.DeviceCoordinateCache)

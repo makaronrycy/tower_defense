@@ -1,0 +1,957 @@
+<?xml version="1.0" ?>
+<GameHistory>
+  <Metadata>
+    <Date>2025-04-06T22:00:51.749781</Date>
+    <GameMode>single_player</GameMode>
+    <ServerIP/>
+    <Map>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>4 4 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0 0 0</Row>
+      <Row>4 4 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>4 4 4 0 0 0 0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>4 4 4 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 0 0 5 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1</Row>
+      <Row>0 0 0 0 0 5 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1</Row>
+      <Row>0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 5 0 1 0 3</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 4 4 0 0 0 1 0 0</Row>
+      <Row>0 0 0 0 0 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 4 4 4 0 0 0 1 0 0</Row>
+      <Row>2 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 4 4 4 4 4 4 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 4 4 4 4 4 4 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 5 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 4 4 4 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 5 1 0 0 0 0 0 0 0 0 0 0 0 4 4 4 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 5 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0</Row>
+      <Row>0 0 0 0 0 0 0 0 0 0 0 0 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0</Row>
+    </Map>
+    <Path>
+      <Point>
+        <X>0</X>
+        <Y>23</Y>
+      </Point>
+      <Point>
+        <X>12</X>
+        <Y>23</Y>
+      </Point>
+      <Point>
+        <X>12</X>
+        <Y>29</Y>
+      </Point>
+      <Point>
+        <X>27</X>
+        <Y>29</Y>
+      </Point>
+      <Point>
+        <X>27</X>
+        <Y>14</Y>
+      </Point>
+      <Point>
+        <X>29</X>
+        <Y>14</Y>
+      </Point>
+      <Point>
+        <X>29</X>
+        <Y>19</Y>
+      </Point>
+    </Path>
+  </Metadata>
+  <Events>
+    <Event>
+      <Time>0.0</Time>
+      <Type>game_start</Type>
+      <Data>{'metadata': {'date': '2025-04-06T22:00:51.749781', 'game_mode': 'single_player', 'map_name': 'default', 'ip_address': '', 'map': [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0], [4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [4, 4, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], [0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1], [0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 1, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 0, 0, 0, 1, 0, 0], [2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 4, 4, 4, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 5, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 4, 4, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0]], 'path': [(0, 23), (12, 23), (12, 29), (27, 29), (27, 14), (29, 14), (29, 19)]}}</Data>
+    </Event>
+    <Event>
+      <Time>0.001</Time>
+      <Type>initial_state</Type>
+      <Data>{'gold': 1000, 'lives': 20, 'wave': 1}</Data>
+    </Event>
+    <Event>
+      <Time>3.726</Time>
+      <Type>tower_placed</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'position': (164.83333333333331, 351.9), 'cost': 30}</Data>
+    </Event>
+    <Event>
+      <Time>6.602</Time>
+      <Type>tower_placed</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': '969c43fabb5d454ba110cb1281722803', 'position': (108.1, 407.09999999999997), 'cost': 50}</Data>
+    </Event>
+    <Event>
+      <Time>8.884</Time>
+      <Type>wave_started</Type>
+      <Data>{'wave_number': 1, 'enemies': ['str', 'str', 'str', 'str', 'str']}</Data>
+    </Event>
+    <Event>
+      <Time>9.875</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '833846f5f9074d4c9ab0f612a3775b46', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>9.891</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': '969c43fabb5d454ba110cb1281722803', 'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (108.1, 407.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>10.002</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (32.910407233991805, 379.7773877588202)}</Data>
+    </Event>
+    <Event>
+      <Time>10.018</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '833846f5f9074d4c9ab0f612a3775b46', 'position': (4.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>10.018</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (23.511708138240785, 376.36206122867276)}</Data>
+    </Event>
+    <Event>
+      <Time>10.875</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'a45982e23fb047d297844c1c9c68a992', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>10.884</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (23.511708138240785, 376.36206122867276)}</Data>
+    </Event>
+    <Event>
+      <Time>10.899</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (23.511708138240785, 376.36206122867276)}</Data>
+    </Event>
+    <Event>
+      <Time>10.915</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'a45982e23fb047d297844c1c9c68a992', 'position': (1.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>11.619</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (23.511708138240785, 376.36206122867276)}</Data>
+    </Event>
+    <Event>
+      <Time>11.875</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '96ed902842c44f31afb23fa25e55d869', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>12.875</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '1552e9dd2f504f318d00dfddd4a3dfa7', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>13.091</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': '969c43fabb5d454ba110cb1281722803', 'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (108.1, 407.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>13.156</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (64.43333511451411, 382.74384312378754)}</Data>
+    </Event>
+    <Event>
+      <Time>13.171</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '96ed902842c44f31afb23fa25e55d869', 'position': (40.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>13.171</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>13.698</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>13.715</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>13.73</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '1552e9dd2f504f318d00dfddd4a3dfa7', 'position': (26.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>13.875</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '8eed44ee6e0a421babcd0af86cb79908', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>14.69</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>14.706</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>14.722</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '8eed44ee6e0a421babcd0af86cb79908', 'position': (26.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>14.722</Time>
+      <Type>wave_ended</Type>
+      <Data>{'wave_number': 2, 'gold': 880, 'lives': 20}</Data>
+    </Event>
+    <Event>
+      <Time>14.77</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (55.70000213741693, 377.87261174854507)}</Data>
+    </Event>
+    <Event>
+      <Time>16.444</Time>
+      <Type>tower_sold</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': '969c43fabb5d454ba110cb1281722803', 'position': (108.1, 407.09999999999997), 'refund': 25}</Data>
+    </Event>
+    <Event>
+      <Time>20.241</Time>
+      <Type>wave_started</Type>
+      <Data>{'wave_number': 2, 'enemies': ['str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str', 'str']}</Data>
+    </Event>
+    <Event>
+      <Time>21.233</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'd9bfc3d76021465d9b5411889e1f0669', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>22.237</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'dccc284b7ad547559670b2f70ee77302', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>23.234</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '8ff4120f5c7b4f2f910af09c9b9de095', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>23.347</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>23.459</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (85.88453022543314, 364.82619386478507)}</Data>
+    </Event>
+    <Event>
+      <Time>23.475</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (76.01592983694562, 366.4419680978832)}</Data>
+    </Event>
+    <Event>
+      <Time>24.237</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'c41c7216981d4a23862f02e891a5539d', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>24.955</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>24.989</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (136.37087207268178, 361.3809439923412)}</Data>
+    </Event>
+    <Event>
+      <Time>25.006</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (126.88338498579793, 364.54125865645494)}</Data>
+    </Event>
+    <Event>
+      <Time>25.236</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '97d064ef11034038865dcfdba98cbce0', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>25.303</Time>
+      <Type>tower_placed</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'position': (223.86666666666665, 404.0333333333333), 'cost': 30}</Data>
+    </Event>
+    <Event>
+      <Time>25.304</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'FastRat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>25.395</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'FastRat', 'position': (158.89492702869273, 377.98197927226124)}</Data>
+    </Event>
+    <Event>
+      <Time>25.411</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (149.6132499375536, 374.26035726353666)}</Data>
+    </Event>
+    <Event>
+      <Time>26.234</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'fcd82272c45e409994eaa3c96ee09c49', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>26.547</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>26.548</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (165.8630274564347, 361.8468452291593)}</Data>
+    </Event>
+    <Event>
+      <Time>26.563</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (166.8927215795361, 371.7936904583187)}</Data>
+    </Event>
+    <Event>
+      <Time>26.899</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>26.947</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (192.28279948518, 379.4882863001292)}</Data>
+    </Event>
+    <Event>
+      <Time>26.962</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'd9bfc3d76021465d9b5411889e1f0669', 'position': (179.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>26.962</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (184.38683268980833, 373.35202454182814)}</Data>
+    </Event>
+    <Event>
+      <Time>27.019</Time>
+      <Type>tower_upgraded</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'position': (223.86666666666665, 404.0333333333333), 'upgrade_level': 1, 'cost': 20}</Data>
+    </Event>
+    <Event>
+      <Time>27.234</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'c8dd12e97f98494a90a23a3d12af23b5', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>28.152</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>28.153</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (172.5711530406206, 358.23452020105043)}</Data>
+    </Event>
+    <Event>
+      <Time>28.153</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (172.5711530406206, 358.23452020105043)}</Data>
+    </Event>
+    <Event>
+      <Time>28.166</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (180.3089727479079, 364.5690404021009)}</Data>
+    </Event>
+    <Event>
+      <Time>28.248</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '0929139d5eb84321a087bbf2eeb98e2e', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>28.498</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>28.535</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (200.20148899084472, 385.59534630731065)}</Data>
+    </Event>
+    <Event>
+      <Time>28.552</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (192.31309643223742, 379.44935063196976)}</Data>
+    </Event>
+    <Event>
+      <Time>28.699</Time>
+      <Type>tower_placed</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'position': (404.0333333333333, 269.09999999999997), 'cost': 50}</Data>
+    </Event>
+    <Event>
+      <Time>28.755</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (404.0333333333333, 269.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>28.899</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (420.558773155964, 367.7250974076506)}</Data>
+    </Event>
+    <Event>
+      <Time>28.915</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'c41c7216981d4a23862f02e891a5539d', 'position': (428.9522432713489, 397.93871564644337)}</Data>
+    </Event>
+    <Event>
+      <Time>28.915</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>29.234</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '1e3af0da309446cba6a67a3ed77a1f87', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>29.763</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>29.779</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (172.17151399560578, 370.50513651032554)}</Data>
+    </Event>
+    <Event>
+      <Time>29.795</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (175.840604326742, 379.8077047654883)}</Data>
+    </Event>
+    <Event>
+      <Time>29.955</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>29.971</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (205.97095165081745, 412.963248454515)}</Data>
+    </Event>
+    <Event>
+      <Time>29.987</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (197.02309414289286, 417.42820601510584)}</Data>
+    </Event>
+    <Event>
+      <Time>30.236</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '0a4bbc188e0a4e4f862218660171414b', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>30.514</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>31.238</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'e070939420c84cc3a7056cba40b751df', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>31.362</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>31.363</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (167.81510631552547, 361.4451050220869)}</Data>
+    </Event>
+    <Event>
+      <Time>31.363</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (167.81510631552547, 361.4451050220869)}</Data>
+    </Event>
+    <Event>
+      <Time>31.378</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (170.79687929771762, 370.99021004417386)}</Data>
+    </Event>
+    <Event>
+      <Time>31.394</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>31.426</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (211.30610243975232, 431.2772725914795)}</Data>
+    </Event>
+    <Event>
+      <Time>31.442</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (207.11924769744755, 440.35858567752825)}</Data>
+    </Event>
+    <Event>
+      <Time>32.236</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': '9d88f3503e0a4faa99e0cde32889cf56', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>32.834</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>32.883</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (236.8921302354025, 441.85313368737457)}</Data>
+    </Event>
+    <Event>
+      <Time>32.898</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'dccc284b7ad547559670b2f70ee77302', 'position': (244.77464170085898, 460.4144551224874)}</Data>
+    </Event>
+    <Event>
+      <Time>32.898</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (240.14849612758647, 451.3080837758849)}</Data>
+    </Event>
+    <Event>
+      <Time>32.962</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>32.963</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (168.23690434464757, 361.30296253161424)}</Data>
+    </Event>
+    <Event>
+      <Time>32.963</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (168.23690434464757, 361.30296253161424)}</Data>
+    </Event>
+    <Event>
+      <Time>32.978</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (171.64047535596183, 370.7059250632285)}</Data>
+    </Event>
+    <Event>
+      <Time>33.235</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'f15276f051694adf8b42ff3cddddd825', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>34.236</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'bfcdb63eeb354f7cbcc5219892f07791', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>34.275</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>34.339</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (249.27388925458524, 447.09692631357535)}</Data>
+    </Event>
+    <Event>
+      <Time>34.355</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '8ff4120f5c7b4f2f910af09c9b9de095', 'position': (259.271983428044, 460.69209309759833)}</Data>
+    </Event>
+    <Event>
+      <Time>34.355</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (254.35533377216896, 455.70964490962376)}</Data>
+    </Event>
+    <Event>
+      <Time>34.563</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>34.564</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'FastRat', 'position': (167.6575838876303, 361.4928936617974)}</Data>
+    </Event>
+    <Event>
+      <Time>34.564</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (167.6575838876303, 361.4928936617974)}</Data>
+    </Event>
+    <Event>
+      <Time>34.579</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (170.48183444192728, 371.0857873235948)}</Data>
+    </Event>
+    <Event>
+      <Time>35.235</Time>
+      <Type>enemy_spawned</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': '6263e04e75714188aa875c6c9446bf14', 'position': (0.0, 368.0)}</Data>
+    </Event>
+    <Event>
+      <Time>35.715</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>35.731</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (404.0333333333333, 269.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>35.762</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'FastRat', 'position': (234.43030328008066, 442.61324496490306)}</Data>
+    </Event>
+    <Event>
+      <Time>35.763</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (234.43030328008066, 442.61324496490306)}</Data>
+    </Event>
+    <Event>
+      <Time>35.778</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'f15276f051694adf8b42ff3cddddd825', 'position': (227.8248172166203, 460.53168496267256)}</Data>
+    </Event>
+    <Event>
+      <Time>35.778</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (237.07121243343417, 452.2582228727955)}</Data>
+    </Event>
+    <Event>
+      <Time>35.891</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (420.558773155964, 367.7250974076506)}</Data>
+    </Event>
+    <Event>
+      <Time>35.906</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': 'e070939420c84cc3a7056cba40b751df', 'position': (428.98728192231715, 395.93902259676344)}</Data>
+    </Event>
+    <Event>
+      <Time>35.906</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>36.162</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>36.163</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (168.01034946567123, 361.3819074291444)}</Data>
+    </Event>
+    <Event>
+      <Time>36.178</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (171.18736559800914, 370.86381485828883)}</Data>
+    </Event>
+    <Event>
+      <Time>36.819</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'FastRat', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>36.835</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': '9d88f3503e0a4faa99e0cde32889cf56', 'position': (428.7770500165076, 407.93718089484304)}</Data>
+    </Event>
+    <Event>
+      <Time>37.154</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>37.219</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (260.18960208294664, 438.3938391902725)}</Data>
+    </Event>
+    <Event>
+      <Time>37.234</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (267.45418916620264, 445.26594036166034)}</Data>
+    </Event>
+    <Event>
+      <Time>37.507</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>37.763</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>37.827</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (178.20287803096573, 400.07940716299856)}</Data>
+    </Event>
+    <Event>
+      <Time>37.843</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (180.87678697049222, 409.7152885955983)}</Data>
+    </Event>
+    <Event>
+      <Time>38.595</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>38.675</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (271.48512774167864, 440.53651353516716)}</Data>
+    </Event>
+    <Event>
+      <Time>38.691</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (279.4215379208473, 446.62037690213947)}</Data>
+    </Event>
+    <Event>
+      <Time>39.362</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>39.363</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (161.68874945415067, 361.39271258528265)}</Data>
+    </Event>
+    <Event>
+      <Time>39.378</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (158.54416557496802, 370.8854251705653)}</Data>
+    </Event>
+    <Event>
+      <Time>39.747</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (404.0333333333333, 269.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>39.892</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'FastRat', 'position': (420.558773155964, 367.7250974076506)}</Data>
+    </Event>
+    <Event>
+      <Time>39.907</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'FastRat', 'enemy_id': '6263e04e75714188aa875c6c9446bf14', 'position': (428.9522432713489, 397.93871564644337)}</Data>
+    </Event>
+    <Event>
+      <Time>39.907</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>40.035</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>40.131</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (282.4920423988436, 442.28337019947367)}</Data>
+    </Event>
+    <Event>
+      <Time>40.147</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (290.86709607486887, 447.74766118035086)}</Data>
+    </Event>
+    <Event>
+      <Time>40.963</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>40.996</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (180.6848652612005, 377.3701577446981)}</Data>
+    </Event>
+    <Event>
+      <Time>41.011</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (185.96870923715625, 385.8602103262641)}</Data>
+    </Event>
+    <Event>
+      <Time>41.474</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>41.506</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (422.21131713822706, 377.58760714841566)}</Data>
+    </Event>
+    <Event>
+      <Time>41.602</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (293.49207741760614, 443.4325995417662)}</Data>
+    </Event>
+    <Event>
+      <Time>41.618</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (302.19525376147357, 448.3575078178203)}</Data>
+    </Event>
+    <Event>
+      <Time>42.562</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'ba14efddacce4f3f8e5492f3ab52dd2a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (164.83333333333331, 351.9)}</Data>
+    </Event>
+    <Event>
+      <Time>42.674</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (187.52647470006838, 428.61389271122505)}</Data>
+    </Event>
+    <Event>
+      <Time>42.698</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (190.36311737091026, 438.2031293001282)}</Data>
+    </Event>
+    <Event>
+      <Time>42.915</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>43.043</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (298.47368820527925, 454.3701224357081)}</Data>
+    </Event>
+    <Event>
+      <Time>43.059</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (306.7633572651251, 459.9630990026386)}</Data>
+    </Event>
+    <Event>
+      <Time>43.235</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (404.0333333333333, 269.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>43.411</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (423.37414603481784, 387.5311317350553)}</Data>
+    </Event>
+    <Event>
+      <Time>43.427</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '97d064ef11034038865dcfdba98cbce0', 'position': (428.28236573587805, 411.4191895076736)}</Data>
+    </Event>
+    <Event>
+      <Time>43.427</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (424.9858804266082, 397.40039271297655)}</Data>
+    </Event>
+    <Event>
+      <Time>43.842</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (424.9858804266082, 397.40039271297655)}</Data>
+    </Event>
+    <Event>
+      <Time>43.858</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'fcd82272c45e409994eaa3c96ee09c49', 'position': (427.93530520032607, 428.91574771163715)}</Data>
+    </Event>
+    <Event>
+      <Time>44.355</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BasicTower', 'tower_id': 'a0548cc1152144839ddd30379cb1985a', 'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (223.86666666666665, 404.0333333333333)}</Data>
+    </Event>
+    <Event>
+      <Time>44.403</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'target_enemy': 'Rat', 'position': (227.00402241749404, 443.9101060073192)}</Data>
+    </Event>
+    <Event>
+      <Time>44.419</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'bfcdb63eeb354f7cbcc5219892f07791', 'position': (229.7773916382538, 460.12724342409683)}</Data>
+    </Event>
+    <Event>
+      <Time>44.419</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BasicProjectile', 'position': (227.7883613552009, 453.8792991758157)}</Data>
+    </Event>
+    <Event>
+      <Time>44.85</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (424.9858804266082, 397.40039271297655)}</Data>
+    </Event>
+    <Event>
+      <Time>44.866</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': 'c8dd12e97f98494a90a23a3d12af23b5', 'position': (427.93530520032607, 428.91574771163715)}</Data>
+    </Event>
+    <Event>
+      <Time>45.026</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (424.9858804266082, 397.40039271297655)}</Data>
+    </Event>
+    <Event>
+      <Time>46.435</Time>
+      <Type>tower_shot</Type>
+      <Data>{'tower_type': 'BombTower', 'tower_id': 'daf412cc685e41fb9e0bec8553e02565', 'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (404.0333333333333, 269.09999999999997)}</Data>
+    </Event>
+    <Event>
+      <Time>46.595</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'target_enemy': 'Rat', 'position': (422.6511623027624, 377.5129902016592)}</Data>
+    </Event>
+    <Event>
+      <Time>46.611</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '0929139d5eb84321a087bbf2eeb98e2e', 'position': (428.40135791949587, 405.42036955202894)}</Data>
+    </Event>
+    <Event>
+      <Time>46.611</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'BombProjectile', 'position': (424.3436922090741, 387.3687165836282)}</Data>
+    </Event>
+    <Event>
+      <Time>47.154</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (424.3436922090741, 387.3687165836282)}</Data>
+    </Event>
+    <Event>
+      <Time>47.17</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '1e3af0da309446cba6a67a3ed77a1f87', 'position': (428.13362550635577, 418.9177144522294)}</Data>
+    </Event>
+    <Event>
+      <Time>48.146</Time>
+      <Type>projectile_hit</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'target_enemy': 'Rat', 'position': (424.3436922090741, 387.3687165836282)}</Data>
+    </Event>
+    <Event>
+      <Time>48.162</Time>
+      <Type>enemy_killed</Type>
+      <Data>{'enemy_type': 'Rat', 'enemy_id': '0a4bbc188e0a4e4f862218660171414b', 'position': (428.13362550635577, 418.9177144522294)}</Data>
+    </Event>
+    <Event>
+      <Time>48.162</Time>
+      <Type>wave_ended</Type>
+      <Data>{'wave_number': 3, 'gold': 1065, 'lives': 20}</Data>
+    </Event>
+    <Event>
+      <Time>48.21</Time>
+      <Type>projectile_expired</Type>
+      <Data>{'projectile_type': 'ExplosionProjectile', 'position': (424.3436922090741, 387.3687165836282)}</Data>
+    </Event>
+  </Events>
+</GameHistory>

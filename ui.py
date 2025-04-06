@@ -1,11 +1,14 @@
 from PySide6.QtWidgets import (
     QGraphicsView, QGraphicsScene, QVBoxLayout, QWidget, QPushButton, QLabel, QGraphicsItem
+, QGraphicsTextItem, QGraphicsPixmapItem, QGraphicsRectItem, QGraphicsEllipseItem,QRadioButton,QButtonGroup, QGroupBox, QTextEdit, QLineEdit
 )
 from PySide6.QtCore import Qt, QRectF, QPoint, Signal,Slot
-from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QColor
+from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QColor,QFont
 from PySide6.QtCore import QTimer, QPointF
 from graphicsScenes import GameState
 from graphicItems import BaseTowerItem
+from network import GameNetworkEvent
+import time
 
 TOWER_TYPES = {
     "basic": {
@@ -32,7 +35,7 @@ TOWER_TYPES = {
 class TowerStoreWidget(QWidget):
     tower_selected = Signal(dict)  # Emit when a tower is selected
     wave_started = Signal()  # Emit when a wave starts
-    game_paused = Signal()  # Emit when the game is paused
+    game_saved = Signal()  # Emit when the game is paused
     def __init__(self, game_state : GameState):
         super().__init__()
         self.game_state = game_state
@@ -57,17 +60,18 @@ class TowerStoreWidget(QWidget):
             btn.setFixedSize(150, 50)
             btn.setStyleSheet("background-color: lightblue;")
             btn.setProperty('cost', tower['cost'])
-            btn.setEnabled(False)
+            cost = btn.property('cost')
+            btn.setEnabled(self.game_state.gold >= cost)
             btn.clicked.connect(lambda _, t=tower: self.handle_tower_selection(t))
             self.tower_buttons.append(btn)
             layout.addWidget(btn)
         self.waveButton = QPushButton("Start Wave")
         self.waveButton.clicked.connect(self.handle_wave_start)
-        self.pauseButton = QPushButton("Pause")
-        self.pauseButton.clicked.connect(self.handle_pause)
+        self.saveButton = QPushButton("Save")
+        self.saveButton.clicked.connect(self.handle_save)
         
         layout.addWidget(self.waveButton)
-        layout.addWidget(self.pauseButton)
+        layout.addWidget(self.saveButton)
         self.setLayout(layout)
 
     def create_button_content(self, tower):
@@ -82,14 +86,10 @@ class TowerStoreWidget(QWidget):
         self.wave_started.emit()
     def handle_wave_end(self):
         self.waveButton.setEnabled(True)
-        self.waveButton.setText(f"Start Wave {self.game_state.current_wave + 1}")
-    def handle_pause(self):
-        """Emit signal when the game is paused"""
-        if self.pauseButton.text() == "Resume":
-            self.pauseButton.setText("Pause")
-        else:
-            self.pauseButton.setText("Resume")
-        self.game_paused.emit()
+        self.waveButton.setText(f"Start Wave {self.game_state.wave + 1}")
+    def handle_save(self):
+        """Emit signal when the game is saved"""
+        self.game_saved.emit()
     def handle_tower_selection(self, tower):
         """Emit signal when a tower is selected"""
         self.tower_selected.emit(tower)
@@ -174,7 +174,67 @@ class TowerOverviewWidget(QWidget):
         self.tower = None
         self.tower_deselected.emit()
         self.hide()
+
+# class TitleScene(QGraphicsScene):
+#     def __init__(self, parent=None):
+#         super().__init__(parent)
+#         self.setSceneRect(0, 0, 800, 600)
+#         self.setBackgroundBrush(QColor(255, 255, 255))  # Set background color to white
+
+#         # Add title text
+#         title_text = "Tower Defense Game"
+#         title_item = QGraphicsTextItem(title_text)
+#         title_item.setFont(QFont("Arial", 24))
+#         title_item.setDefaultTextColor(QColor(0, 0, 0))  # Set text color to black
+#         title_item.setPos(300, 250)  # Center the text
+#         self.addItem(title_item)
+
+#         self.button_group = QButtonGroup(self)
+#         # Add buttons for different game modes
+#         # Add single player button
+#         single_player_button = QRadioButton("Single Player")
+#         single_player_button.setGeometry(300, 350, 200, 50)
+#         single_player_button.setStyleSheet("background-color: lightblue;")
+#         single_player_button.setChecked(True)
+#         self.button_group.addButton(single_player_button)
+#         self.addWidget(single_player_button)
+#         # Add multiplayer button
+#         multiplayer_button = QRadioButton("Multiplayer")
+#         multiplayer_button.setGeometry(300, 400, 200, 50)
+#         multiplayer_button.setStyleSheet("background-color: lightblue;")
+#         self.button_group.addButton(multiplayer_button)
+#         self.addWidget(multiplayer_button)
+#         # Add local multiplayer button
+#         local_multiplayer_button = QRadioButton("Local Multiplayer")
+#         local_multiplayer_button.setGeometry(300, 450, 200, 50)
+#         local_multiplayer_button.setStyleSheet("background-color: lightblue;")
+#         self.button_group.addButton(local_multiplayer_button)
+#         self.addWidget(local_multiplayer_button)
         
+#         # Add start button
+#         start_button = QPushButton("Start Game")
+#         start_button.setGeometry(300, 500, 200, 50)
+#         start_button.setStyleSheet("background-color: lightblue;")
+#         start_button.clicked.connect(self.start_game)
+#         self.addWidget(start_button)
+
+
+#         # Add exit button
+#         exit_button = QPushButton("Exit")
+#         exit_button.setGeometry(350, 450, 100, 50)
+#         exit_button.setStyleSheet("background-color: lightblue;")
+#         exit_button.clicked.connect(self.exit_game)
+#         self.addWidget(exit_button)
+    def start_game(self):
+        """Start the game and switch to the main scene"""
+        selected_button = self.button_group.checkedButton()
+        if selected_button:
+            game_mode = selected_button.text()
+            print(f"Selected Game Mode: {game_mode}")
+            # Emit signal or handle game mode selection here
+            self.parent().start_game(game_mode)
+        
+
 class GameView(QGraphicsView):
     viewport_changed = Signal(QRectF)  # Emits visible area changes 
     
@@ -321,5 +381,100 @@ class GameView(QGraphicsView):
     #         pass
     #     else:
     #         self.tower_selected.emit(None)
+
+# Add this class
+
+class MultiplayerInfoWidget(QWidget):
+    """Widget to display multiplayer game information"""
     
+    send_chat = Signal(str)  # For chat messages
+    
+    def __init__(self, game_scene):
+        super().__init__()
+        self.game_scene = game_scene
+        self.init_ui()
         
+    def init_ui(self):
+        layout = QVBoxLayout()
+        
+        # Player information
+        self.player_info = QGroupBox("Players")
+        player_layout = QVBoxLayout()
+        
+        self.player1_label = QLabel("Player 1 (Left Side)")
+        self.player1_label.setStyleSheet("color: blue; font-weight: bold;")
+        
+        self.player2_label = QLabel("Player 2 (Right Side)")
+        self.player2_label.setStyleSheet("color: gray;")
+        
+        player_layout.addWidget(self.player1_label)
+        player_layout.addWidget(self.player2_label)
+        self.player_info.setLayout(player_layout)
+        
+        # Chat section
+        self.chat_box = QGroupBox("Chat")
+        chat_layout = QVBoxLayout()
+        
+        self.chat_history = QTextEdit()
+        self.chat_history.setReadOnly(True)
+        
+        self.chat_input = QLineEdit()
+        self.chat_input.setPlaceholderText("Type message and press Enter...")
+        self.chat_input.returnPressed.connect(self.send_chat_message)
+        
+        chat_layout.addWidget(self.chat_history)
+        chat_layout.addWidget(self.chat_input)
+        self.chat_box.setLayout(chat_layout)
+        
+        # Add to main layout
+        layout.addWidget(self.player_info)
+        layout.addWidget(self.chat_box)
+        
+        # Network status indicator
+        self.status_label = QLabel("Connected")
+        self.status_label.setStyleSheet("color: green;")
+        layout.addWidget(self.status_label)
+        
+        self.setLayout(layout)
+        
+        # Connect signals from game scene
+        self.game_scene.player_joined.connect(self.on_player_joined)
+        self.game_scene.player_left.connect(self.on_player_left)
+        self.game_scene.network_event.connect(self.on_network_event)
+    
+    def on_player_joined(self, player_id):
+        """Handle player join event"""
+        self.player2_label.setStyleSheet("color: green; font-weight: bold;")
+        self.add_chat_message("System", f"Player {player_id} has joined the game")
+    
+    def on_player_left(self, player_id):
+        """Handle player leave event"""
+        self.player2_label.setStyleSheet("color: gray;")
+        self.add_chat_message("System", f"Player {player_id} has left the game")
+    
+    def on_network_event(self, event):
+        """Handle various network events"""
+        if event["type"] == GameNetworkEvent.CHAT_MESSAGE:
+            sender = event["player_id"]
+            message = event["data"]["message"]
+            self.add_chat_message(sender, message)
+    
+    def add_chat_message(self, sender, message):
+        """Add message to chat history"""
+        timestamp = time.strftime("%H:%M:%S")
+        formatted = f"[{timestamp}] {sender}: {message}"
+        self.chat_history.append(formatted)
+    
+    def send_chat_message(self):
+        """Send chat message"""
+        message = self.chat_input.text().strip()
+        if message:
+            self.chat_input.clear()
+            # Send via network manager
+            self.game_scene.network.send_event(GameNetworkEvent.CHAT_MESSAGE, {
+                "message": message
+            })
+            # Add to local chat (our own messages)
+            player_id = self.game_scene.player_id or "You"
+            self.add_chat_message(player_id, message)
+

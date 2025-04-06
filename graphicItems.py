@@ -4,6 +4,8 @@ from animationManager import SpriteSheet, AnimationComponent
 from PySide6.QtGui import QPainter, QPainterPath, QColor, QBrush,QPixmap
 from animationManager import AnimationComponent
 from abc import ABC, abstractmethod
+from uuid import uuid4
+
 import math
 class BaseItem(QGraphicsObject):
     def __init__(self,parent=None, animation = None):
@@ -157,7 +159,7 @@ class PathItem(QGraphicsItem):
 
 class BaseTowerItem(BaseItem):
     kills_changed = Signal(int) # Emit when kills change
-    def __init__(self, pos, animation=None, max_upgrade_level=3):
+    def __init__(self, pos, animation=None,tower_id = None, max_upgrade_level=3):
         super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(pos)
@@ -179,7 +181,7 @@ class BaseTowerItem(BaseItem):
         self._upgrade_level = 0
         self._boost_modifier = 1.0
         self.max_upgrade_level = max_upgrade_level
-        
+        self.tower_id = uuid4().hex if tower_id == None else tower_id # Unique ID for the tower
         # Store upgrade sprites
         self.upgrade_sprites = []
         if animation is not None:
@@ -262,7 +264,7 @@ class BaseTowerItem(BaseItem):
         else:
             print(f"Tower already at maximum level ({self._upgrade_level})")
 class BaseEnemyItem(BaseItem):
-    def __init__(self,path,animation = None):
+    def __init__(self,path,enemy_id = None,animation = None):
         super().__init__(animation=animation)
         self.set_z_value(1)
         self.setPos(QPointF(0, 300))
@@ -275,7 +277,7 @@ class BaseEnemyItem(BaseItem):
         self._speed = 10
         self._health = 100
         self._path = path
-        
+        self.enemy_id =  uuid4().hex if enemy_id == None else enemy_id # Unique ID for the enemy
         #path[0] to punkt startowy
         self._current_waypoint = path[1]
         self._target = None
