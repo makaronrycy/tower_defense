@@ -53,7 +53,41 @@ class MainWindow(QMainWindow):
         """Show the configuration dialog"""
         dialog = ConfigurationDialog(self, self.scene)
         dialog.config_saved.connect(self.apply_configuration)
+        
+        # Add internet connection button
+        dialog.add_internet_button()
+        dialog.internet_button.clicked.connect(self.show_internet_dialog)
+        
         dialog.exec()
+
+    def show_internet_dialog(self):
+        """Show the internet connection dialog"""
+        from connection_dialog import ConnectionDialog
+        
+        dialog = ConnectionDialog(self)
+        dialog.connection_ready.connect(self.handle_internet_connection)
+        dialog.exec()
+
+    def handle_internet_connection(self, settings):
+        """Handle internet connection settings"""
+        if settings["is_host"]:
+            # Create a configuration for hosting
+            config = {
+                "game_mode": "network_game",
+                "is_host": True,
+                "server_port": settings["port"]
+            }
+        else:
+            # Create a configuration for joining
+            config = {
+                "game_mode": "network_game",
+                "is_host": False,
+                "server_ip": settings["ip"],
+                "server_port": settings["port"]
+            }
+        
+        # Apply the configuration
+        self.apply_config(config)
 
     @Slot(dict)
     def apply_configuration(self, config):
@@ -85,7 +119,7 @@ class MainWindow(QMainWindow):
                     QMessageBox.critical(self, "Network Error", "Failed to host game")
                     return
             else:
-                server_ip = config.get("server_ip", "127.000.000.001")
+                server_ip = config.get("server_ip", "127.0.0.1")
                 port = int(config.get("server_port", 5555))
                 success = self.scene.network.join_game(server_ip, port)
                 if not success:

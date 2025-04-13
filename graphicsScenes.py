@@ -108,6 +108,9 @@ class GameScene(QGraphicsScene):
             self.network.player_joined.connect(self._on_player_joined)
             self.network.player_left.connect(self._on_player_left)
             self.network.error.connect(self._on_network_error)
+
+            # Add state request handler
+            self.network.state_request.connect(self._on_state_request)
         self.map_divider = None
         # Game state containers
         self.game_items = {
@@ -207,6 +210,14 @@ class GameScene(QGraphicsScene):
         
     def start_wave(self):
         """Start a new wave of enemies"""
+        if self.multiplayer and not self.is_host:
+            print("Only host can start waves in multiplayer")
+            return
+        # Send network event if in multiplayer as host
+        if self.multiplayer and self.is_host:
+            self.network.send_event(GameNetworkEvent.START_WAVE, {
+                "wave_number": self.game_state.wave
+            })
         enemies = {}
         self.game_state.wave_started = True
         if self.game_state.wave > len(ENEMY_LIST):
@@ -419,6 +430,13 @@ class GameScene(QGraphicsScene):
             "position": (pos.x(), pos.y()),
             "cost": new_tower.cost
         })
+        if self.multiplayer and not hasattr(tower, '_network_event'):
+            self.network.send_event(GameNetworkEvent.PLACE_TOWER, {
+                "tower_type": tower.name,
+                "x": pos.x(),
+                "y": pos.y(),
+                "tower_id": new_tower.tower_id
+            })
         
     def boost_around_tower(self,tower):
         """Boost towers around the tower"""
@@ -452,6 +470,13 @@ class GameScene(QGraphicsScene):
             "enemy_id": enemy.enemy_id,
             "position": (enemy.pos().x(), enemy.pos().y())
         })
+        if self.multiplayer and not hasattr(enemy, '_network_event'):
+            self.network.send_event(GameNetworkEvent.SPAWN_ENEMY, {
+                "enemy_type": enemy.__class__.__name__,
+                "x": enemy.pos().x(),
+                "y": enemy.pos().y(),
+                "enemy_id": enemy.enemy_id
+            })
 
 
     # ----------------------
@@ -465,15 +490,23 @@ class GameScene(QGraphicsScene):
     @Slot(object)
     def handle_tower_sale(self, tower):
         """Handle tower sale"""
+        self.game_items['towers'].remove(tower)
+        refund += tower.cost // 2
+        self.game_state.gold = refund
         self.removeItem(tower)
         if self.game_state.record: self.history_recorder.record_event("tower_sold", {
             "tower_type": tower.__class__.__name__,
             "tower_id": tower.tower_id,
             "position": (tower.pos().x(), tower.pos().y()),
-            "refund": tower.cost // 2
+            "refund": refund
         })
-        self.game_items['towers'].remove(tower)
-        self.game_state.gold += tower.cost // 2
+        # Send network event in multiplayer
+        if self.multiplayer:
+            self.network.send_event(GameNetworkEvent.TOWER_SELL, {
+                "tower_id": tower.tower_id,
+                "refund": refund
+            })
+
         
 
 
@@ -491,6 +524,12 @@ class GameScene(QGraphicsScene):
                 "position": (tower.pos().x(), tower.pos().y()),
                 "upgrade_level": tower.upgrade_level,
                 "cost": tower.upgrade_cost
+            })
+        # Send network event in multiplayer
+        if self.multiplayer:
+            self.network.send_event(GameNetworkEvent.TOWER_UPGRADE, {
+                "tower_id": tower.tower_id,
+                "upgrade_level": tower._upgrade_level
             })
     @Slot(object)
     def handle_tower_selection(self, tower):
@@ -726,6 +765,11 @@ class GameScene(QGraphicsScene):
         """Handle another player joining"""
         print(f"Player joined: {player_id}")
         self.player_joined.emit(player_id)
+
+        # Send current game state if we're the host
+        if self.is_host:
+            print("Sending current game state to new player...")
+            self._on_state_request()
     
     def _on_player_left(self, player_id):
         """Handle player leaving"""
@@ -745,35 +789,231 @@ class GameScene(QGraphicsScene):
         # Don't process our own events that came back
         if sender_id == self.player_id:
             return
-            
+        
         # Handle different event types
-        if event_type == GameNetworkEvent.PLACE_TOWER:
+        if event_type == GameNetworkEvent.SYNC_STATE:
+            # Received a game state sync from the host
+            print("Received game state from host")
+            self.apply_network_state(data)
+        elif event_type == GameNetworkEvent.PLACE_TOWER:
             # Another player placed a tower
             tower_type = data["tower_type"]
             pos = QPointF(data["x"], data["y"])
-            
-            # Create a temporary ghost tower with flag to avoid network loop
-            ghost = GhostTowerItem({"name": tower_type})
-            ghost._network_event = True
-            self.add_tower(ghost, pos)
+            tower_id = data.get("tower_id", None)  # Get tower ID if provided
+
+            # Create the actual tower directly (not a ghost)
+            if tower_type == "basic":
+                tower = BasicTower(pos, self.animations["basic_tower"], tower_id)
+                tower._network_event = True  # Mark as network-sourced to avoid loops
+                self.game_items['towers'].append(tower)
+                self.addItem(tower)
+                print(f"Network: Added {tower_type} tower at {pos}")
+
+            elif tower_type == "bomb":
+                tower = BombTower(pos, self.animations["bomb_tower"], tower_id)
+                tower._network_event = True
+                self.game_items['towers'].append(tower)
+                self.addItem(tower)
+                print(f"Network: Added {tower_type} tower at {pos}")
+
+            elif tower_type == "booster":
+                tower = BoosterTower(pos, self.animations["booster_tower"], tower_id)
+                tower._network_event = True
+                self.game_items['towers'].append(tower)
+                self.addItem(tower)
+                # Apply booster effect
+                self.boost_around_tower(tower)
+                print(f"Network: Added {tower_type} tower at {pos}")
             
         elif event_type == GameNetworkEvent.START_WAVE:
             # Wave was started by host
             if not self.is_host:
                 # Handle wave start as client
-                super().start_wave()
-                
+                self.game_state.wave = data["wave_number"]
+                self.game_state.wave_started = True
+                print(f"Network: Wave {self.game_state.wave} started")
+        elif event_type == GameNetworkEvent.SPAWN_ENEMY:
+            # Another player spawned an enemy
+            enemy_type = data["enemy_type"]
+            enemy_id = data["enemy_id"]
+
+            # Create the actual enemy directly (not a ghost)
+            if enemy_type == "Rat":
+                enemy = Rat(self.path_points,enemy_id,self.animations["rat"])
+            elif enemy_type == "FastRat":
+                enemy = FastRat(self.path_points,enemy_id, self.animations["fast_rat"])
+            elif enemy_type == "GiantRat":
+                enemy = GiantRat(self.path_points,enemy_id, self.animations["giant_rat"])
+
+            if enemy:
+                self.game_items['enemies'].append(enemy)
+                self.addItem(enemy)
+                enemy.setPos(self.path_points[0])
+                print(f"Network: Spawned {enemy_type} at {self.path_points[0]}")
         elif event_type == GameNetworkEvent.TOWER_UPGRADE:
             # Another player upgraded a tower
             tower_id = data["tower_id"]
-            # Find and upgrade the tower
-            # ...
+            # Find the tower with matching ID
+            tower = next((t for t in self.game_items['towers'] if t.tower_id == tower_id), None)
+            if tower:
+                tower.upgrade_level = 0  # Trigger upgrade
+                tower.upgrade()
+                print(f"Network: Upgraded tower {tower_id}")
+
+    
             
         elif event_type == GameNetworkEvent.TOWER_SELL:
             # Another player sold a tower
             tower_id = data["tower_id"]
-            # Find and remove the tower
-            # ...
+            # Find the tower with matching ID
+            tower = next((t for t in self.game_items['towers'] if t.tower_id == tower_id), None)
+            if tower:
+                self.removeItem(tower)
+                self.game_items['towers'].remove(tower)
+                print(f"Network: Sold tower {tower_id}")
+        elif event_type == GameNetworkEvent.ENEMY_KILLED:
+            # Handle enemy killed remotely - for proper sync in case of lag
+            enemy_id = data.get("enemy_id")
+            gold_earned = data.get("gold", 0)
+
+            # Find the enemy with matching ID
+            enemy = next((e for e in self.game_items['enemies'] if e.enemy_id == enemy_id), None)
+            if enemy:
+                self.game_state.gold += gold_earned
+                self.removeItem(enemy)
+                self.game_items['enemies'].remove(enemy)
+                print(f"Network: Enemy {enemy_id} killed")
         
         # Emit the event for UI to handle
         self.network_event.emit(event)
+    def serialize_game_state(self):
+        """Serialize the current game state for network transmission"""
+        # Serialize map and path
+        path_data = []
+        for point in self.path_points:
+            path_data.append([point.x(), point.y()])
+
+        # Serialize towers
+        towers_data = []
+        for tower in self.game_items['towers']:
+            tower_data = {
+                "type": tower.__class__.__name__,
+                "position": [tower.pos().x(), tower.pos().y()],
+                "upgrade_level": tower._upgrade_level,
+                "tower_id": tower.tower_id,
+                "kills": tower.kills
+            }
+            towers_data.append(tower_data)
+
+        # Build complete state
+        state = {
+            "grid": self.map_generator.grid,
+            "path": path_data,
+            "towers": towers_data,
+            "gold": self.game_state.gold,
+            "lives": self.game_state.lives,
+            "wave": self.game_state.wave,
+            "wave_started": self.game_state.wave_started
+        }
+
+        return state
+
+    def apply_network_state(self, state_data):
+        """Apply received network state to this scene"""
+        # Only apply state if we're not the host
+        if self.is_host:
+            return
+
+        # Process map and path data if available
+        if "grid" in state_data and "path" in state_data:
+            # Clear existing map
+            for item in self.items():
+                self.removeItem(item)
+
+            # Reset game state containers
+            self.game_items = {
+                "towers": [],
+                "enemies": [],
+                "projectiles": []
+            }
+
+            # Apply map data
+            grid = state_data["grid"]
+            path_data = state_data["path"]
+
+            # Convert path coordinates to QPointF objects
+            self.path_points = []
+            for p in path_data:
+                self.path_points.append(QPointF(p[0], p[1]))
+
+            # Recreate map graphics
+            self.map_graphics_manager = MapGraphicsManager(grid, 16, self.tileset)
+            for item in self.map_graphics_manager.create_items():
+                self.addItem(item)
+
+            # Recreate the map divider for multiplayer
+            if self.multiplayer:
+                divider_path = QPainterPath()
+                divider_path.moveTo(self.map_width * cfg.TILE_SIZE / 2, 0)
+                divider_path.lineTo(self.map_width * cfg.TILE_SIZE / 2, cfg.MAP_HEIGHT * cfg.TILE_SIZE)
+
+                self.map_divider = QGraphicsPathItem(divider_path)
+                pen = QPen(QColor(255, 255, 0))
+                pen.setWidth(3)
+                pen.setStyle(Qt.DashLine)
+                self.map_divider.setPen(pen)
+                self.map_divider.setZValue(10)
+                self.addItem(self.map_divider)
+
+        # Apply tower data
+        if "towers" in state_data:
+            # Clear existing towers
+            for tower in list(self.game_items['towers']):
+                self.removeItem(tower)
+            self.game_items['towers'] = []
+
+            # Add towers from state
+            for tower_data in state_data["towers"]:
+                tower_type = tower_data["type"]
+                position = QPointF(tower_data["position"][0], tower_data["position"][1])
+                tower_id = tower_data["tower_id"]
+
+                tower = None
+                if tower_type == "BasicTower":
+                    tower = BasicTower(position, self.animations["basic_tower"], tower_id)
+                elif tower_type == "BombTower":
+                    tower = BombTower(position, self.animations["bomb_tower"], tower_id)
+                elif tower_type == "BoosterTower":
+                    tower = BoosterTower(position, self.animations["booster_tower"], tower_id)
+
+                if tower:
+                    # Set tower properties
+                    tower._upgrade_level = tower_data.get("upgrade_level", 0)
+                    tower.kills = tower_data.get("kills", 0)
+
+                    # Apply upgrade if needed
+                    if tower._upgrade_level > 0:
+                        tower.upgrade()
+
+                    # Add to scene
+                    self.game_items['towers'].append(tower)
+                    self.addItem(tower)
+
+        # Apply game state values
+        if "gold" in state_data:
+            self.game_state.gold = state_data["gold"]
+        if "lives" in state_data:
+            self.game_state.lives = state_data["lives"]
+        if "wave" in state_data:
+            self.game_state.wave = state_data["wave"]
+        if "wave_started" in state_data:
+            self.game_state.wave_started = state_data["wave_started"]
+    def _on_state_request(self):
+        """Handle request for game state (host only)"""
+        if not self.is_host:
+            return
+
+        # Serialize and send the current game state
+        state_data = self.serialize_game_state()
+        self.network.send_game_state(state_data)
+        print("Sent game state to newly connected player")

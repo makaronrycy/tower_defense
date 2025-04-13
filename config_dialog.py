@@ -572,3 +572,9 @@ class ConfigurationDialog(QDialog):
 
         group_box.setLayout(layout)
         parent_layout.addWidget(group_box)
+
+    def add_internet_button(self):
+        """Add a button for internet play"""
+        self.internet_button = QPushButton("Internet Play Setup")
+        self.internet_button.setStyleSheet("background-color: #3498db; color: white;")
+        self.layout().addWidget(self.internet_button)

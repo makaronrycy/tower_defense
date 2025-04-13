@@ -16,6 +16,7 @@ class GameNetworkEvent:
     TOWER_UPGRADE = "tower_upgrade"
     TOWER_SELL = "tower_sell"
     CHAT_MESSAGE = "chat_message"
+    SPAWN_ENEMY = "spawn_enemy"
 
 class NetworkManager(QObject):
     """Manages network communication for multiplayer games"""
@@ -27,7 +28,7 @@ class NetworkManager(QObject):
     event_received = Signal(dict)
     player_joined = Signal(str)  # Player ID
     player_left = Signal(str)    # Player ID
-    
+    state_request = Signal()  # Request for game state
     def __init__(self, is_host=False):
         super().__init__()
         self.socket = None
@@ -43,13 +44,20 @@ class NetworkManager(QObject):
         self.server_socket = None
         self.clients = {}
         
+        self.connection_status = "disconnected"
+        self.reconnect_attempts = 0
+        self.max_reconnect_attempts = 5
+        self.heartbeat_timer = QTimer()
+        self.heartbeat_timer.timeout.connect(self._send_heartbeat)
+        self.heartbeat_timer.setInterval(5000)  # 5 seconds
+        
     def host_game(self, port=5555):
         """Host a new game server"""
         try:
             self.is_host = True
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.server_socket.bind(('127.0.0.1', port))
+            self.server_socket.bind(('0.0.0.0', port))
             self.server_socket.listen(2)  # Allow 2 players max
             
             print(f"Server started on 127.0.0.1:{port}")
@@ -158,7 +166,17 @@ class NetworkManager(QObject):
                 pass
         
         self.disconnected.emit()
-    
+    def send_game_state(self, state_data):
+        """Send the current game state to all connected clients"""
+        event = {
+            "type": GameNetworkEvent.SYNC_STATE,
+            "data": state_data,
+            "player_id": self.player_id,
+            "timestamp": time.time()
+        }
+
+        if self.is_host:
+            self._broadcast(event)
     def send_event(self, event_type, data):
         """Send a game event to the server/clients"""
         event = {
@@ -231,6 +249,11 @@ class NetworkManager(QObject):
                 event = json.loads(data)
                 event["player_id"] = player_id  # Ensure correct player_id
                 
+                # On initial connection, send game state
+                if event["type"] == GameNetworkEvent.CONNECT:
+                    # Request the current game state from the host
+                    self.state_request.emit()
+                
                 # Process the event
                 self._handle_event(event)
                 
@@ -286,3 +309,68 @@ class NetworkManager(QObject):
         """Process a game event"""
         # Emit the event for game logic to handle
         self.event_received.emit(event)
+        
+    def _send_heartbeat(self):
+        """Send heartbeat to check connection status"""
+        if not self.running:
+            return
+            
+        if self.is_host:
+            # Check if clients are still connected
+            dead_clients = []
+            for player_id, client_socket in self.clients.items():
+                try:
+                    # Non-blocking check
+                    client_socket.setblocking(0)
+                    # Try to peek at the socket buffer
+                    data = client_socket.recv(16, socket.MSG_PEEK)
+                    if not data:
+                        dead_clients.append(player_id)
+                    client_socket.setblocking(1)
+                except:
+                    pass
+                
+            # Remove dead connections
+            for player_id in dead_clients:
+                self.player_left.emit(player_id)
+                self.clients[player_id].close()
+                del self.clients[player_id]
+                self.connected_players.remove(player_id)
+                
+        else:
+            # Client sends heartbeat to server
+            try:
+                self.send_event("heartbeat", {})
+            except:
+                # Connection may be lost, try to reconnect
+                if self.reconnect_attempts < self.max_reconnect_attempts:
+                    self.reconnect_attempts += 1
+                    self.connection_status = "reconnecting"
+                    self.error.emit(f"Connection lost. Attempting to reconnect ({self.reconnect_attempts}/{self.max_reconnect_attempts})...")
+                    
+                    # Try to reconnect
+                    try:
+                        self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                        self.socket.settimeout(5)
+                        self.socket.connect(self.server_address)
+                        self.socket.settimeout(None)
+                        
+                        # Reconnection successful
+                        self.reconnect_attempts = 0
+                        self.connection_status = "connected"
+                        self.error.emit("Reconnected to server!")
+                        
+                        # Re-register with server
+                        self.socket.sendall(json.dumps({
+                            "type": GameNetworkEvent.CONNECT,
+                            "data": {"player_name": "Player", "reconnect": True}
+                        }).encode('utf-8'))
+                        
+                    except:
+                        pass  # Will try again on next heartbeat
+                else:
+                    # Give up after max attempts
+                    self.connection_status = "disconnected"
+                    self.running = False
+                    self.disconnected.emit()
+                    self.error.emit("Failed to reconnect after multiple attempts. Connection closed.")

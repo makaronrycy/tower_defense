@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import (
     QGraphicsView, QGraphicsScene, QVBoxLayout, QWidget, QPushButton, QLabel, QGraphicsItem
 , QGraphicsTextItem, QGraphicsPixmapItem, QGraphicsRectItem, QGraphicsEllipseItem,QRadioButton,QButtonGroup, QGroupBox, QTextEdit, QLineEdit
-)
+, QHBoxLayout)
 from PySide6.QtCore import Qt, QRectF, QPoint, Signal,Slot
 from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QColor,QFont
 from PySide6.QtCore import QTimer, QPointF
@@ -435,6 +435,11 @@ class MultiplayerInfoWidget(QWidget):
         self.status_label.setStyleSheet("color: green;")
         layout.addWidget(self.status_label)
         
+        # Add network status widget if game is multiplayer
+        if self.game_scene.multiplayer:
+            self.network_status = NetworkStatusWidget(self.game_scene.network)
+            layout.addWidget(self.network_status)
+        
         self.setLayout(layout)
         
         # Connect signals from game scene
@@ -477,4 +482,52 @@ class MultiplayerInfoWidget(QWidget):
             # Add to local chat (our own messages)
             player_id = self.game_scene.player_id or "You"
             self.add_chat_message(player_id, message)
+
+class NetworkStatusWidget(QWidget):
+    """Widget to display network connection status"""
+    
+    def __init__(self, network_manager):
+        super().__init__()
+        self.network_manager = network_manager
+        self.init_ui()
+        
+    def init_ui(self):
+        layout = QVBoxLayout(self)
+        
+        # Connection status
+        status_layout = QHBoxLayout()
+        status_layout.addWidget(QLabel("Status:"))
+        self.status_label = QLabel("Connected")
+        self.status_label.setStyleSheet("color: green; font-weight: bold;")
+        status_layout.addWidget(self.status_label)
+        
+        # Ping indicator
+        ping_layout = QHBoxLayout()
+        ping_layout.addWidget(QLabel("Ping:"))
+        self.ping_label = QLabel("--")
+        ping_layout.addWidget(self.ping_label)
+        
+        # Create the layout
+        layout.addLayout(status_layout)
+        layout.addLayout(ping_layout)
+        
+        # Update timer
+        self.update_timer = QTimer()
+        self.update_timer.timeout.connect(self.update_status)
+        self.update_timer.start(1000)  # Update every second
+        
+    def update_status(self):
+        """Update the connection status display"""
+        if hasattr(self.network_manager, "connection_status"):
+            status = self.network_manager.connection_status
+            
+            if status == "connected":
+                self.status_label.setText("Connected")
+                self.status_label.setStyleSheet("color: green; font-weight: bold;")
+            elif status == "reconnecting":
+                self.status_label.setText("Reconnecting...")
+                self.status_label.setStyleSheet("color: orange; font-weight: bold;")
+            else:
+                self.status_label.setText("Disconnected")
+                self.status_label.setStyleSheet("color: red; font-weight: bold;")
 
