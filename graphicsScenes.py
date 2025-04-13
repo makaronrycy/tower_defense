@@ -491,8 +491,8 @@ class GameScene(QGraphicsScene):
     def handle_tower_sale(self, tower):
         """Handle tower sale"""
         self.game_items['towers'].remove(tower)
-        refund += tower.cost // 2
-        self.game_state.gold = refund
+        refund = tower.cost // 2
+        self.game_state.gold += refund
         self.removeItem(tower)
         if self.game_state.record: self.history_recorder.record_event("tower_sold", {
             "tower_type": tower.__class__.__name__,
