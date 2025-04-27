@@ -1,6 +1,7 @@
 from PySide6.QtWidgets import QApplication, QMainWindow, QPushButton
 from PySide6.QtWidgets import QGraphicsScene, QGraphicsView,QLabel,QVBoxLayout,QWidget
 from PySide6.QtWidgets import QSplitter, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QLineEdit, QPushButton, QGraphicsView
+from PySide6.QtWidgets import QProgressBar, QGroupBox
 
 from PySide6.QtWidgets import QMainWindow,  QDialog, QFormLayout, QSpinBox, QCheckBox,QMessageBox
 from PySide6.QtCore import Qt, Signal, Slot
@@ -11,6 +12,7 @@ from ui import GameView, TowerStoreWidget,TowerOverviewWidget,MultiplayerInfoWid
 
 from config_dialog import ConfigurationDialog
 from graphicsScenes import GameScene, GameState
+from tower_defense_ai import TowerDefenseAI, TrainingWorker
 
 
 class MainWindow(QMainWindow):
@@ -193,12 +195,190 @@ class MainWindow(QMainWindow):
         self.scene.game_over_signal.connect(self.store.handle_game_over)
         self.scene.wave_ended.connect(self.store.handle_wave_end)
         
+        # Add AI controls if they don't exist yet
+        if not hasattr(self, 'ai_panel'):
+            ai_controls = self.create_ai_controls()
+            
+            # Add AI controls to layout
+            if hasattr(self, 'multiplayer_info'):
+                # Multiplayer mode
+                right_panel = self.multiplayer_info.parent()
+                right_layout = right_panel.layout()
+                right_layout.addWidget(ai_controls)
+            else:
+                # Single player mode
+                right_panel = self.store
+                if isinstance(right_panel, QSplitter):
+                    # Create a container for store and AI controls
+                    container = QWidget()
+                    container_layout = QVBoxLayout(container)
+                    container_layout.addWidget(self.store)
+                    container_layout.addWidget(ai_controls)
+                    
+                    # Replace store with container in splitter
+                    index = right_panel.indexOf(self.store)
+                    right_panel.replaceWidget(index, container)
+                else:
+                    # Store already in a container
+                    right_layout = right_panel.layout()
+                    right_layout.addWidget(ai_controls)
+        
+        # Initialize AI for the new scene
+        self.initialize_ai()
 
     def hide_uis(self):
         """Hide the UI elements when the game is over"""
         self.store.hide()
         self.tower_overview.hide()
         self.multiplayer_info.hide()
+
+    def create_ai_controls(self):
+        """Create AI control panel"""
+        self.ai_panel = QGroupBox("AI Controls")
+        layout = QVBoxLayout()
+        
+        # AI Buttons
+        buttons_layout = QHBoxLayout()
+        self.ai_play_button = QPushButton("AI Play")
+        self.ai_stop_button = QPushButton("Stop AI")
+        self.ai_train_button = QPushButton("Train AI")
+        
+        self.ai_play_button.clicked.connect(self.start_ai_play)
+        self.ai_stop_button.clicked.connect(self.stop_ai_play)
+        self.ai_train_button.clicked.connect(self.train_ai)
+        
+        # Disable stop button initially
+        self.ai_stop_button.setEnabled(False)
+        
+        buttons_layout.addWidget(self.ai_play_button)
+        buttons_layout.addWidget(self.ai_stop_button)
+        buttons_layout.addWidget(self.ai_train_button)
+        
+        # AI Status
+        self.ai_status = QLabel("AI Status: Idle")
+        
+        # Progress Bar for training
+        self.training_progress = QProgressBar()
+        self.training_progress.setVisible(False)
+        
+        layout.addLayout(buttons_layout)
+        layout.addWidget(self.ai_status)
+        layout.addWidget(self.training_progress)
+        
+        self.ai_panel.setLayout(layout)
+        return self.ai_panel
+
+    def initialize_ai(self):
+        """Initialize the AI controller"""
+        self.ai = TowerDefenseAI(self.scene)
+        
+        # Connect signals
+        self.ai.action_performed.connect(self.on_ai_action)
+        self.ai.thinking.connect(lambda: self.ai_status.setText("AI Status: Thinking..."))
+
+    def start_ai_play(self):
+        """Start AI playing the game"""
+        if not hasattr(self, 'ai'):
+            self.initialize_ai()
+        
+        # Check if model exists or needs to be created
+        model_exists = self.ai.load_model()
+        
+        if not model_exists:
+            reply = QMessageBox.question(
+                self, "No AI Model Found", 
+                "No trained AI model found. Do you want to train one now?",
+                QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes
+            )
+            
+            if reply == QMessageBox.Yes:
+                self.train_ai()
+                return
+        
+        # Start AI playing
+        self.ai.start()
+        self.ai_status.setText("AI Status: Playing")
+        
+        # Update button states
+        self.ai_play_button.setEnabled(False)
+        self.ai_stop_button.setEnabled(True)
+        self.ai_train_button.setEnabled(False)
+
+    def stop_ai_play(self):
+        """Stop AI playing"""
+        if hasattr(self, 'ai'):
+            self.ai.stop()
+        
+        self.ai_status.setText("AI Status: Stopped")
+        
+        # Update button states
+        self.ai_play_button.setEnabled(True)
+        self.ai_stop_button.setEnabled(False)
+        self.ai_train_button.setEnabled(True)
+
+    def train_ai(self):
+        """Start training the AI"""
+        if not hasattr(self, 'ai'):
+            self.initialize_ai()
+        
+        # Ask for training parameters
+        reply = QMessageBox.question(
+            self, "Train AI", 
+            "Training may take a while. Continue?",
+            QMessageBox.Yes | QMessageBox.No, QMessageBox.Yes
+        )
+        
+        if reply == QMessageBox.No:
+            return
+        
+        # Setup progress tracking
+        self.training_progress.setValue(0)
+        self.training_progress.setVisible(True)
+        self.ai_status.setText("AI Status: Training...")
+        
+        # Disable all AI buttons during training
+        self.ai_play_button.setEnabled(False)
+        self.ai_stop_button.setEnabled(False)
+        self.ai_train_button.setEnabled(False)
+        
+        # Create training worker thread
+        self.training_worker = TrainingWorker(self.ai, timesteps=50000)
+        self.training_worker.progress.connect(self.update_training_progress)
+        self.training_worker.completed.connect(self.on_training_completed)
+        
+        # Start training in background
+        self.training_worker.start()
+
+    def update_training_progress(self, progress):
+        """Update the training progress bar"""
+        self.training_progress.setValue(progress)
+
+    def on_training_completed(self, success):
+        """Handle training completion"""
+        self.training_progress.setVisible(False)
+        
+        # Re-enable buttons
+        self.ai_play_button.setEnabled(True)
+        self.ai_train_button.setEnabled(True)
+        
+        if success:
+            self.ai_status.setText("AI Status: Training Completed")
+            QMessageBox.information(self, "Training Complete", 
+                                  "AI training completed successfully.")
+        else:
+            self.ai_status.setText("AI Status: Training Failed")
+            QMessageBox.warning(self, "Training Failed", 
+                              "AI training encountered an error.")
+
+    def on_ai_action(self, action):
+        """Handle AI actions for visualization"""
+        tower_type, x, y = action
+        tower_names = {1: "Basic", 2: "Bomb", 3: "Booster"}
+        
+        if tower_type > 0:
+            self.ai_status.setText(f"AI Status: Placed {tower_names.get(tower_type, '')} Tower at ({x},{y})")
+        else:
+            self.ai_status.setText("AI Status: Evaluating...")
 if __name__ == "__main__":
     app = QApplication([])
     window = MainWindow()

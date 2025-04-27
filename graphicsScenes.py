@@ -199,6 +199,7 @@ class GameScene(QGraphicsScene):
         })
         print("Game Over!")
         # Reset game state
+    
     def _setup_timers(self):
         """Initialize game timers"""
         self.game_timer = QTimer()
@@ -228,14 +229,18 @@ class GameScene(QGraphicsScene):
         for enemy_type in enemies:
             enemies_to_spawn = enemies[enemy_type]
             for enemy in range(enemies_to_spawn):
-                self.game_state.enemies_to_spawn.append(enemy_type)
+                # Ensure lowercase enemy types are used
+                self.game_state.enemies_to_spawn.append(enemy_type.lower())
         random.shuffle(self.game_state.enemies_to_spawn)
 
         if self.game_state.record: self.history_recorder.record_event("wave_started", {
             "wave_number": self.game_state.wave,
             "enemies": [e.__class__.__name__ for e in self.game_state.enemies_to_spawn]
         })
-        self.spawn_timer.start()
+        # Make sure spawn timer is running (important for AI play)
+        if not self.spawn_timer.isActive():
+            self.spawn_timer.start()
+
     def end_wave(self):
         """End the current wave of enemies"""
         self.game_state.wave_started = False
@@ -335,8 +340,8 @@ class GameScene(QGraphicsScene):
 
                     self.game_over()
                 continue
-
-            enemy.advance_animation(16)
+            if type(enemy) != 'MockEnemy':
+                enemy.advance_animation(16)
         if self.game_items['enemies'] == [] and self.game_state.enemies_to_spawn == [] and self.game_state.wave_started:
             self.end_wave()
     
@@ -614,7 +619,9 @@ class GameScene(QGraphicsScene):
         self.game_state.score = 0
         self.game_state.wave = 1
         self.game_state.record = False
-
+        self.game_items['towers'] = []
+        self.game_items['enemies'] = []
+        self.game_items['projectiles'] = []
         # Notify UI
         self.game_state.gold_changed.emit(self.game_state.gold)
         self.game_state.lives_changed.emit(self.game_state.lives)
@@ -1017,3 +1024,32 @@ class GameScene(QGraphicsScene):
         state_data = self.serialize_game_state()
         self.network.send_game_state(state_data)
         print("Sent game state to newly connected player")
+    def advance_for_training(self):
+        """Advance the game state without using timers (for AI training)"""
+        # Skip the timer-based operations, just update game state
+        self._update_enemies()
+        self._update_towers() 
+        self._update_projectiles()
+        self._check_collisions()
+        self._cleanup_items()
+    def start_wave_training(self):
+        """Start a new wave of enemies specifically for training, bypassing network checks"""
+        # Prepare enemy wave data
+        enemies = {}
+        self.game_state.wave_started = True
+        
+        if self.game_state.wave > len(ENEMY_LIST):
+            enemies = build_new_wave(self.game_state.wave)
+        else:
+            enemies = ENEMY_LIST[self.game_state.wave-1]
+            
+        # Queue up enemies to spawn
+        self.game_state.enemies_to_spawn = []
+        for enemy_type in enemies:
+            enemies_to_spawn = enemies[enemy_type]
+            for _ in range(enemies_to_spawn):
+                self.game_state.enemies_to_spawn.append(enemy_type.lower())
+        
+        random.shuffle(self.game_state.enemies_to_spawn)
+        
+        # Note: We don't start spawn_timer here since we're handling enemy spawns manually in training
