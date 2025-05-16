@@ -3,18 +3,18 @@ from PySide6.QtWidgets import QGraphicsScene, QGraphicsItem
 from PySide6.QtGui import QBrush, QColor, QPainterPath,QPen
 from PySide6.QtWidgets import QGraphicsSceneMouseEvent, QGraphicsView,QGraphicsPathItem
 from PySide6.QtCore import QEvent, QObject, Signal, Slot
-from graphicItems import GhostTowerItem ,BaseItem, BaseTowerItem, RangeIndicator, ProjectileItem,BaseEnemyItem
-from graphicItems import  PathItem, ObstacleItem, MapItem
-from towers import BasicTower, BombTower, BoosterTower,BombProjectile, ExplosionProjectile,BasicProjectile
-from enemies import Rat, FastRat, GiantRat
-from map_generator import MapGenerator,MapGraphicsManager
-from animationManager import AsepriteLoader,SpriteSheet, get_all_animations
-from tileset import get_tileset
-from waves import ENEMY_LIST, build_new_wave
+from game_objects.graphicItems import GhostTowerItem ,BaseItem, BaseTowerItem, RangeIndicator, ProjectileItem,BaseEnemyItem
+from game_objects.graphicItems import  PathItem, ObstacleItem, MapItem
+from game_objects.towers import BasicTower, BombTower, BoosterTower,BombProjectile, ExplosionProjectile,BasicProjectile
+from game_objects.enemies import Rat, FastRat, GiantRat
+from map_generation.map_generator import MapGenerator,MapGraphicsManager
+from game_objects.animationManager import AsepriteLoader,SpriteSheet, get_all_animations
+from map_generation.tileset import get_tileset
+from game_objects.waves import ENEMY_LIST, build_new_wave
 import random
-import config as cfg
-from history_recorder import GameHistoryRecorder
-from network import NetworkManager,GameNetworkEvent
+import config.config as cfg
+from history.history_recorder import GameHistoryRecorder
+from network.network import NetworkManager,GameNetworkEvent
 '''
 Klasa odpowiedzialna za sterowanie grą i jej elementami
 '''

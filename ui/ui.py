@@ -5,9 +5,9 @@ from PySide6.QtWidgets import (
 from PySide6.QtCore import Qt, QRectF, QPoint, Signal,Slot
 from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QColor,QFont
 from PySide6.QtCore import QTimer, QPointF
-from graphicsScenes import GameState
-from graphicItems import BaseTowerItem
-from network import GameNetworkEvent
+from game_objects.gameEngine import GameState
+from game_objects.graphicItems import BaseTowerItem
+from network.network import GameNetworkEvent
 import time
 
 TOWER_TYPES = {

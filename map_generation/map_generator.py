@@ -3,7 +3,7 @@ from enum import Enum
 from PySide6.QtCore import QPointF
 from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QGraphicsPixmapItem
-from graphicItems import MapItem, PathItem,ObstacleItem
+from game_objects.graphicItems import MapItem, PathItem,ObstacleItem
 class TileType(Enum):
     EMPTY = 0
     PATH = 1

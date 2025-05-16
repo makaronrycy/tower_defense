@@ -1,8 +1,8 @@
 from PySide6.QtCore import Qt, QRectF, QPointF, Property, QObject, Signal, QPropertyAnimation
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsObject
-from animationManager import SpriteSheet, AnimationComponent
+from game_objects.animationManager import SpriteSheet, AnimationComponent
 from PySide6.QtGui import QPainter, QPainterPath, QColor, QBrush,QPixmap
-from animationManager import AnimationComponent
+from game_objects.animationManager import AnimationComponent
 from abc import ABC, abstractmethod
 from uuid import uuid4
 

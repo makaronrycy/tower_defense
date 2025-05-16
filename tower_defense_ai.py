@@ -8,8 +8,8 @@ from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import BaseCallback
 from PySide6.QtCore import QObject, Signal, Slot, QTimer, QPointF, QThread
 from PySide6.QtWidgets import QMessageBox,QApplication
-from enemies import Rat, GiantRat,FastRat
-import config as cfg
+from game_objects.enemies import Rat, GiantRat,FastRat
+import config.config as cfg
 from functools import wraps
 
 def safe_for_training(method):
@@ -159,7 +159,7 @@ class TowerDefenseEnv(gym.Env):
                 tower_costs = {"basic": 20, "bomb": 200, "booster": 80}
                 if self.game_scene.game_state.gold >= tower_costs[tower_type_name]:
                     # Check if placement is valid
-                    from graphicItems import GhostTowerItem
+                    from game_objects.graphicItems import GhostTowerItem
                     # Use tower_config instead
                     tower_config = {
                         "type": tower_type_name,
@@ -399,7 +399,7 @@ class TowerDefenseAI(QObject):
                     
                     try:
                         pos = self.env._grid_to_scene((x, y))
-                        from towers import BasicTower
+                        from game_objects.towers import BasicTower
                         tower = BasicTower(pos, self.game_scene.animations["basic_tower"])
                         
                         if self.game_scene.is_valid_position(tower):
@@ -511,7 +511,7 @@ class TowerDefenseAI(QObject):
                     
                 # Check if position is valid
                 scene_pos = self.env._grid_to_scene((grid_x, grid_y))
-                from graphicItems import GhostTowerItem
+                from game_objects.graphicItems import GhostTowerItem
                 tower_costs = {"basic": 20, "bomb": 200, "booster": 80}
                 tower_names = {1: "basic", 2: "bomb", 3: "booster"}
                 ghost = GhostTowerItem({"type": tower_names[tower_type], "cost": tower_costs[tower_names[tower_type]]})
@@ -549,7 +549,7 @@ class TowerDefenseAI(QObject):
                 if self.game_scene.game_state.gold >= cost:
                     try:
                         # Create a tower directly instead of using ghost tower
-                        from towers import BasicTower, BombTower, BoosterTower
+                        from game_objects.towers import BasicTower, BombTower, BoosterTower
                         
                         if tower_type_name == "basic":
                             tower = BasicTower(scene_pos, self.game_scene.animations["basic_tower"])
@@ -564,7 +564,7 @@ class TowerDefenseAI(QObject):
                                 return success
                         
                         # If direct placement failed, try using the ghost tower method
-                        from graphicItems import GhostTowerItem
+                        from game_objects.graphicItems import GhostTowerItem
                         ghost_tower = GhostTowerItem({"type": tower_type_name, "cost": cost})
                         ghost_tower.setPos(scene_pos)
                         ghost_tower.name = tower_type_name  # Ensure name property exists

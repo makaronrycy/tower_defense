@@ -1,4 +1,4 @@
-from animationManager import AsepriteLoader,SpriteSheet
+from game_objects.animationManager import AsepriteLoader,SpriteSheet
 
 def get_tileset():
     tileset_data = AsepriteLoader("spritesheets/tileset-sheet.json").get_tileset_data()

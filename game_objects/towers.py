@@ -1,8 +1,8 @@
 from PySide6.QtWidgets import QGraphicsItem, QGraphicsPixmapItem, QGraphicsScene, QGraphicsView
 from PySide6.QtCore import QRectF, QPointF, Qt, QTimer
-from graphicItems import BaseTowerItem, ProjectileItem
+from game_objects.graphicItems import BaseTowerItem, ProjectileItem
 from PySide6.QtGui import QPainter, QColor, QBrush, QPen, QPixmap
-from animationManager import AnimationComponent
+from game_objects.animationManager import AnimationComponent
 
 class BasicProjectile(ProjectileItem):
     def __init__(self,pos,target,parentTower,animation = None):

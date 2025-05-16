@@ -8,10 +8,10 @@ from PySide6.QtCore import Qt, Signal, Slot
 from PySide6.QtCore import Qt, QRectF, QTimer, QPoint, Signal,QObject
 from PySide6.QtWidgets import QGraphicsView, QApplication
 from PySide6.QtGui import QWheelEvent, QMouseEvent, QPainter, QTransform, QAction
-from ui import GameView, TowerStoreWidget,TowerOverviewWidget,MultiplayerInfoWidget
+from ui.ui import GameView, TowerStoreWidget,TowerOverviewWidget,MultiplayerInfoWidget
 
-from config_dialog import ConfigurationDialog
-from graphicsScenes import GameScene, GameState
+from config.config_dialog import ConfigurationDialog
+from game_objects.gameEngine import GameScene, GameState
 from tower_defense_ai import TowerDefenseAI, TrainingWorker
 
 
@@ -64,7 +64,7 @@ class MainWindow(QMainWindow):
 
     def show_internet_dialog(self):
         """Show the internet connection dialog"""
-        from connection_dialog import ConnectionDialog
+        from ui.connection_dialog import ConnectionDialog
         
         dialog = ConnectionDialog(self)
         dialog.connection_ready.connect(self.handle_internet_connection)

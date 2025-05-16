@@ -11,7 +11,7 @@ import xml.dom.minidom
 import os
 import pymongo
 from datetime import datetime
-from history_player import GameHistoryPlayer
+from history.history_player import GameHistoryPlayer
 
 class GameHistoryManager:
     """Manages saving and loading game history in different formats"""
