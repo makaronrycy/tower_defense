@@ -12,3 +12,6 @@ Features:
 - Animacje (jeśli nie działają proszę użyć scrolla, problemy są z repaintem)
 - Funkcjonalność upgrade'ów
 - Generowanie proceduralne mapy razem z rozmieszczaniem przeszkod na których nie możemy stawiać wieże
+- Multiplayer przez IPv4
+- Funkcja replay'a rozgrywki
+- AI
