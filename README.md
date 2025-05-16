@@ -1,6 +1,9 @@
 # tower_defense
 https://github.com/makaronrycy/tower_defense
-Totalnie niezbalansowany projekt na WNO!
+Projekt na Współczesne Narzędzia do Obliczania 2
+
+# Instalacja
+Aby zainstalować należy wpisać `pip install -r requirements.txt` w konsoli w folderze projektu.
 
 Features:
 - Nieskończone fale
